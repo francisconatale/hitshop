@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed-variant": "#406800",
+                    "surface-variant": "#ddded2",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#635d00",
+                    "background": "#f8f7ee",
+                    "error-container": "#f95630",
+                    "on-surface": "#2e2f29",
+                    "surface": "#f8f7ee",
+                    "on-surface-variant": "#5b5c55",
+                    "error": "#b02500",
+                    "tertiary-fixed-dim": "#e8de4b",
+                    "primary-fixed-dim": "#99ee00",
+                    "outline-variant": "#aeada5",
+                    "on-primary": "#daffa8",
+                    "on-error": "#ffefec",
+                    "surface-bright": "#f8f7ee",
+                    "tertiary-dim": "#565100",
+                    "surface-container-highest": "#ddded2",
+                    "secondary-container": "#e2e2e2",
+                    "on-primary-fixed": "#2c4900",
+                    "on-secondary": "#f3f3f3",
+                    "on-tertiary": "#fff787",
+                    "surface-container": "#e9e9de",
+                    "on-tertiary-container": "#5c5700",
+                    "secondary-fixed": "#e2e2e2",
+                    "on-primary-container": "#395d00",
+                    "secondary-fixed-dim": "#d4d4d4",
+                    "tertiary-fixed": "#f7ed58",
+                    "tertiary-container": "#f7ed58",
+                    "inverse-surface": "#0d0f0a",
+                    "on-secondary-fixed": "#3f3f3f",
+                    "secondary-dim": "#4f4f4f",
+                    "on-background": "#2e2f29",
+                    "primary-fixed": "#a3fe00",
+                    "on-tertiary-fixed-variant": "#666100",
+                    "on-tertiary-fixed": "#484400",
+                    "surface-container-high": "#e3e3d8",
+                    "on-secondary-container": "#525252",
+                    "inverse-primary": "#a3fe00",
+                    "secondary": "#5b5b5b",
+                    "on-error-container": "#520c00",
+                    "primary-container": "#a3fe00",
+                    "surface-tint": "#3f6600",
+                    "primary": "#3f6600",
+                    "primary-dim": "#365900",
+                    "on-secondary-fixed-variant": "#5b5b5b",
+                    "inverse-on-surface": "#9d9d95",
+                    "surface-container-low": "#f2f1e7",
+                    "surface-dim": "#d5d5c9",
+                    "error-dim": "#b92902",
+                    "outline": "#777770"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-huge {
+            font-size: clamp(4rem, 12vw, 10rem);
+            line-height: 0.85;
+        }
+        .sticker-glow {
+            box-shadow: 0 0 0 4px #2e2f29;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Left Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r-8 border-on-surface bg-surface flex flex-col justify-between z-50 overflow-hidden">
+<div>
+<!-- Brand Header -->
+<div class="p-6 border-b-8 border-on-surface">
+<h1 class="font-black uppercase tracking-tighter text-3xl leading-none">RAW EDITORIAL</h1>
+<p class="text-[10px] font-bold tracking-widest mt-2 opacity-60">EXPERIMENTAL BRUTALISM</p>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col p-2 space-y-2">
+<a class="group flex items-center gap-4 p-4 font-bold hover:bg-primary-container/20 transition-all duration-75" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="uppercase">HOME</span>
+</a>
+<a class="group flex items-center gap-4 bg-primary-container text-on-surface border-4 border-on-surface p-4 font-black transition-transform active:translate-x-1 active:translate-y-1" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span class="uppercase">SHOP</span>
+</a>
+<a class="group flex items-center gap-4 p-4 font-bold hover:bg-primary-container/20 transition-all duration-75" href="#">
+<span class="material-symbols-outlined" data-icon="checkroom">checkroom</span>
+<span class="uppercase">APPAREL</span>
+</a>
+<a class="group flex items-center gap-4 p-4 font-bold hover:bg-primary-container/20 transition-all duration-75" href="#">
+<span class="material-symbols-outlined" data-icon="print">print</span>
+<span class="uppercase">PRINTS</span>
+</a>
+<a class="group flex items-center gap-4 p-4 font-bold hover:bg-primary-container/20 transition-all duration-75" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="uppercase">ARCHIVE</span>
+</a>
+</nav>
+</div>
+<!-- Footer Navigation -->
+<div class="p-2 border-t-8 border-on-surface">
+<button class="w-full flex items-center justify-between bg-on-surface text-surface p-4 font-black transition-all hover:bg-primary-container hover:text-on-surface">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="uppercase">CART</span>
+</div>
+<span class="text-xs border-2 border-current px-2 py-0.5">3</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Top Sticky Header for context -->
+<header class="sticky top-0 w-full flex justify-between items-center px-8 py-6 bg-surface border-b-8 border-on-surface z-40">
+<h2 class="text-3xl font-black uppercase tracking-tighter">APPAREL</h2>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2" data-icon="search">search</span>
+<span class="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- Product Gallery Section -->
+<div class="p-8">
+<!-- Hero Title -->
+<div class="mb-16">
+<h1 class="text-huge font-black uppercase tracking-tighter border-b-[16px] border-on-surface pb-4">APPAREL</h1>
+<div class="flex justify-between items-end mt-4">
+<p class="max-w-md font-medium text-lg leading-tight">THE LATEST DROP. REFINED ARCHITECTURAL CUTS MEETS HIGH-VIS ACCENTS. LIMITED QUANTITIES PRODUCED PER CYCLE.</p>
+<span class="text-xs font-black bg-on-surface text-surface px-4 py-2 uppercase">Season 04 / Vol 01</span>
+</div>
+</div>
+<!-- Apparel Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+<!-- Product 1: T-SHIRT -->
+<div class="border-8 border-on-surface bg-surface group cursor-pointer flex flex-col">
+<div class="aspect-[4/5] bg-surface-container overflow-hidden border-b-8 border-on-surface relative">
+<img alt="T-SHIRT" class="w-full h-full object-cover grayscale contrast-125 transition-all group-hover:grayscale-0 group-hover:scale-105" data-alt="Minimalist heavy cotton black t-shirt hanging on a brutalist concrete wall with sharp dramatic shadows and high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkLERYuTApYz1MiQMCDKbdIbqMEEVz6xqkhmsRHghParvv-g1Lg_t7EG7Mifjj47aa2vpv0d2bmAO7Vh_T_47axREArz6eCOCemo0JHdTi06_KOE6Ayppslfe-rvuqVKk2cXsD8SP_btRtjOv6Y3hjrfTlVM8qLmHYfA7Wb8HiMuiIQf1MZbcSr9mrT3hHOmGTV5EWovWy2wM8efeThcKT62Mk_pznjv7AtcQiZsPj3An7zto30ZTN25nHsTxIQLyzpzx-nZxMqek"/>
+<div class="absolute top-4 left-4 bg-primary-container text-on-surface px-3 py-1 font-black text-xs uppercase border-4 border-on-surface">Limited Edition</div>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<h3 class="text-4xl font-black uppercase tracking-tighter leading-none mb-2">T-SHIRT</h3>
+<p class="text-on-surface-variant font-medium">Heavyweight 320GSM single jersey. Oversized architectural fit.</p>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<span class="text-3xl font-black">$45</span>
+<button class="bg-primary-container text-on-surface border-4 border-on-surface px-6 py-2 font-black uppercase hover:invert transition-none">ADD</button>
+</div>
+</div>
+</div>
+<!-- Product 2: TORIFF -->
+<div class="border-8 border-on-surface bg-surface group cursor-pointer flex flex-col">
+<div class="aspect-[4/5] bg-surface-container-high overflow-hidden border-b-8 border-on-surface relative">
+<img alt="TORIFF" class="w-full h-full object-cover grayscale contrast-125 transition-all group-hover:grayscale-0 group-hover:scale-105" data-alt="Stylized avant-garde technical jacket with multiple zippers and futuristic tailoring against a stark white studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-y0sOC-9AbDe86HtwAmtKmFnHNx_512YHHy5_YzsjVoCZaPEIufGlx1rU2Hdj1XvZZ_QP5yilwmCEuHMisXtTErAilGdWWAWwiw4xhVATxNp_vK1IGcftJD0EojzlxU5wS1GLwYfY3DpeQU9spgbK3Ink_CXiaHRk02it7H-7bE6NFL8n3maRJV_Edrrg6FXw7tGxHmq1dN57ccxHl0_QtxxzDaQZ_3IofIio15dTP05omw-ezB1nATBZUoHK_UBLwmeEsY-aoaI"/>
+<div class="absolute top-4 left-4 bg-on-surface text-surface px-3 py-1 font-black text-xs uppercase border-4 border-primary-container">Pre-Order Now</div>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<h3 class="text-4xl font-black uppercase tracking-tighter leading-none mb-2">TORIFF</h3>
+<p class="text-on-surface-variant font-medium">Technical windbreaker with laser-cut ventilation and neon piping.</p>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<span class="text-3xl font-black">$30</span>
+<button class="bg-on-surface text-surface border-4 border-on-surface px-6 py-2 font-black uppercase hover:bg-primary-container hover:text-on-surface transition-none">ADD</button>
+</div>
+</div>
+</div>
+<!-- Product 3: ETHAN REE JAN -->
+<div class="border-8 border-on-surface bg-surface group cursor-pointer flex flex-col">
+<div class="aspect-[4/5] bg-surface-container overflow-hidden border-b-8 border-on-surface relative">
+<img alt="ETHAN REE JAN" class="w-full h-full object-cover grayscale contrast-125 transition-all group-hover:grayscale-0 group-hover:scale-105" data-alt="Detail shot of high-quality raw denim jeans with thick visible stitching and a neon green tag accent on a dark grey surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARBY4iDfWX0OPbH3CWSDMGjX-giRkinpYhKojXjuJ4qpILCr4Ag0CTztTkXOhueOp9qsOPGj8z8jk5-wBdakmctmLSZdtRrO297g53KhLJD1cvNoTYAWTcH8TH1vFRlTidpb7GQtdczdoC6JSm0f3fszGX6dL40bh0Ukt-VxwORAkvSLFH2Z4l4p07V9abKF81E4ZdxSr5Nw-FMC8wsdrAGYBCLpbm4zYXdXrBIzo23Wd5-ZuR8gSj48nI0Ef-YTfWtTGf2s3muiI"/>
+<div class="absolute top-4 left-4 bg-on-surface text-surface px-3 py-1 font-black text-xs uppercase border-4 border-primary-container">Pre-Order Now</div>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<h3 class="text-4xl font-black uppercase tracking-tighter leading-none mb-2">ETHAN REE JAN</h3>
+<p class="text-on-surface-variant font-medium">Raw selvedge denim. Straight leg, high-waisted reconstruction.</p>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<span class="text-3xl font-black">$60</span>
+<button class="bg-on-surface text-surface border-4 border-on-surface px-6 py-2 font-black uppercase hover:bg-primary-container hover:text-on-surface transition-none">ADD</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Prints Section -->
+<section class="border-t-[16px] border-on-surface pt-16">
+<div class="flex justify-between items-start mb-12">
+<h2 class="text-huge font-black uppercase tracking-tighter leading-none">PRINTS</h2>
+<div class="text-right">
+<p class="font-bold text-2xl uppercase italic">limited run of 50</p>
+<p class="text-sm font-medium">MUSEUM QUALITY GICLÉE ON ARCHIVAL PAPER</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<!-- Print 1: ETHAN GEN -->
+<div class="relative">
+<div class="bg-surface-container p-8 border-4 border-on-surface mb-6 group overflow-hidden">
+<img alt="ETHAN GEN" class="w-full grayscale contrast-150 transition-all group-hover:grayscale-0" data-alt="Abstract brutalist architectural photograph featuring sharp concrete angles and deep shadows in black and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTPLcTWK8eqbNPaCTjGxFSkOZAxJ2k3uzT2nI5Hk0Vj1IKjvHfhoG5LDnpaFuysBKJixhHgq-x6gCy6vB-4OMU3PwvOjsXu-m9_1kg4rLvnj8FyEIjIeAU4UYrspcRJ6mwLuqaYelDds2ryIYUUVy0GeSPKYCzsYZcWoI7M9D_9qFUI-7uoUN4Qa_yJ1Ab9TRyHhSDdPxJijk5ZbRIUQVIC9uOL4XNlmOfXE4YlA1uYJq--JHaAnnibMsxNLAmJaIoZifZIfrVs4c"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-2xl font-black uppercase leading-none">ETHAN GEN</h4>
+<span class="text-xs font-bold bg-primary-container px-2 py-0.5">SERIES A</span>
+</div>
+<span class="text-xl font-bold">$120</span>
+</div>
+</div>
+<!-- Print 2: CRETTIC MELL -->
+<div class="relative">
+<div class="bg-surface-container p-8 border-4 border-on-surface mb-6 group overflow-hidden">
+<img alt="CRETTIC MELL" class="w-full grayscale contrast-150 transition-all group-hover:grayscale-0" data-alt="Macro photography of neon light tubes forming abstract geometric shapes in a dark urban environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy1gJq4TnrlfGJz_uZohuRYQAlpuCiVrEBiZ7h3PLe9INRSSo49QVqWYyyinRYDy1JiuZKFFuv5pWAJovBVMGG9k_04K3yHJbzN19lfQ4LSIFLiSWCD1iEjWfOIFiUlWRgiV8FyvMrrpUp8uqlvxJ1yAHW1H3csKG2vWoIdq6Dolwby38IIQAQmFTX4g0zP2ITQXMfU66AEBBfH26GVohlWWMtYWA1xtrHcnNFaR-HpW8C7RCd3OEjr3fZ-_4iaAfvSwH_fRCDHEI"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-2xl font-black uppercase leading-none">CRETTIC MELL</h4>
+<span class="text-xs font-bold bg-primary-container px-2 py-0.5">SERIES A</span>
+</div>
+<span class="text-xl font-bold">$145</span>
+</div>
+</div>
+<!-- Print 3: RUSK CHEW -->
+<div class="relative">
+<div class="bg-surface-container p-8 border-4 border-on-surface mb-6 group overflow-hidden">
+<img alt="RUSK CHEW" class="w-full grayscale contrast-150 transition-all group-hover:grayscale-0" data-alt="Minimalist graphic poster with bold black typography over a vivid textured background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsyDGzLuXEJXVasv-sOQEZQSDkuE7VXLbgqgeZmReJGuGSR8SZgods8eKFPCXhJ_HGxEg_vO8RT47PIGIDFIVi6tEDKEJcv5ei2sDr0xrcbR-sFrJaZT2enJnzjLRO48BSyflAA3O3uKR2j8pc9ATobNTGIwDr_Z-uAduCDxYN1IOP-ALaZR05G6yfgJW8SDsNxXGR3xL_WynJJwtwYjTvuKyi8CR7ZObvabUX2afAgPpOci6H03oG2qNSXdaZCeQMtzjLgg3MNLo"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h4 class="text-2xl font-black uppercase leading-none">RUSK CHEW</h4>
+<span class="text-xs font-bold bg-primary-container px-2 py-0.5">SERIES B</span>
+</div>
+<span class="text-xl font-bold">$110</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Banner / Footer Text -->
+<footer class="mt-24 bg-on-surface text-surface py-20 px-8 overflow-hidden">
+<div class="flex flex-col space-y-4">
+<div class="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter whitespace-nowrap opacity-10 -ml-20">EXPERIMENT</div>
+<div class="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter whitespace-nowrap text-primary-container">EDITORIAL</div>
+<div class="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter whitespace-nowrap opacity-10 ml-40">BRUTALISM</div>
+</div>
+<div class="mt-20 flex justify-between items-end border-t border-surface/20 pt-8 font-bold uppercase tracking-widest text-xs">
+<span>© 2024 RAW EDITORIAL</span>
+<div class="flex gap-12">
+<a class="hover:text-primary-container" href="#">Terms</a>
+<a class="hover:text-primary-container" href="#">Shipping</a>
+<a class="hover:text-primary-container" href="#">Instagram</a>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

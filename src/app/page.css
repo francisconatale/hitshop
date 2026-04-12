@@ -1,0 +1,13 @@
+body {
+  font-family: 'Inter', sans-serif;
+}
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.text-huge {
+  font-size: clamp(4rem, 12vw, 10rem);
+  line-height: 0.85;
+}
+.sticker-glow {
+  box-shadow: 0 0 0 4px #2e2f29;
+}
