@@ -1,10 +1,10 @@
-import Layout from "../components/Layout";
-import ProductGrid from "../components/ProductGrid";
+import PageLayout from "@/components/layout/PageLayout";
+import ProductGrid from "@/components/product/ProductGrid";
 
 export default function Home() {
   return (
-    <Layout>
+    <PageLayout>
       <ProductGrid />
-    </Layout>
+    </PageLayout>
   );
 }

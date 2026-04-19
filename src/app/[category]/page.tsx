@@ -1,7 +1,7 @@
 "use client";
 
-import Layout from "@/components/Layout";
-import ProductGrid from "@/components/ProductGrid";
+import PageLayout from "@/components/layout/PageLayout";
+import ProductGrid from "@/components/product/ProductGrid";
 import { notFound } from "next/navigation";
 import { useSystem } from "@/context/SystemContext";
 import { use } from "react";
@@ -20,8 +20,8 @@ export default function DynamicCategoryPage({
   }
 
   return (
-    <Layout>
+    <PageLayout>
       <ProductGrid category={category.toLowerCase() as any} />
-    </Layout>
+    </PageLayout>
   );
 }

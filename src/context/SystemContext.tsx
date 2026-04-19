@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialProductsData } from '@/components/ProductGrid/types';
+import { initialProductsData } from '@/components/product/types';
 
 interface SystemContextType {
   categories: string[];

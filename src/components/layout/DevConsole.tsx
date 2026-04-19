@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Terminal as TerminalIcon, Cpu, Activity } from "lucide-react";
-import ScrambleText from "./ScrambleText";
+import ScrambleText from "@/components/ui/ScrambleText";
 import { useSystem } from "@/context/SystemContext";
 
 export default function DevConsole() {
@@ -52,15 +52,7 @@ export default function DevConsole() {
     }, 1000);
   };
 
-  if (!isOpen) return (
-    <button 
-      onClick={() => setIsOpen(true)}
-      className="fixed bottom-4 right-4 bg-on-surface text-primary-container p-3 border-4 border-primary-container font-black flex items-center gap-2 hover:bg-primary-container hover:text-on-surface transition-colors z-[100]"
-    >
-      <TerminalIcon size={20} />
-      <span className="text-xs uppercase tracking-widest font-black">Sys.Console</span>
-    </button>
-  );
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-on-surface/95 z-[200] flex items-center justify-center p-4 backdrop-blur-md">

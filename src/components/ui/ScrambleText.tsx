@@ -6,20 +6,31 @@ interface ScrambleTextProps {
   text: string;
   className?: string;
   delay?: number;
+  onComplete?: () => void;
 }
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
 
-export default function ScrambleText({ text, className = "", delay = 0 }: ScrambleTextProps) {
-  const [displayText, setDisplayText] = useState(text);
+export default function ScrambleText({ text, className = "", delay = 0, onComplete }: ScrambleTextProps) {
+  const [displayText, setDisplayText] = useState(text); 
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsMounted(true);
+    }, delay);
+    return () => clearTimeout(timeout);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     let iteration = 0;
     let interval: NodeJS.Timeout;
 
     const startScramble = () => {
       interval = setInterval(() => {
-        setDisplayText((prev) =>
+        setDisplayText(
           text
             .split("")
             .map((char, index) => {
@@ -33,19 +44,19 @@ export default function ScrambleText({ text, className = "", delay = 0 }: Scramb
 
         if (iteration >= text.length) {
           clearInterval(interval);
+          if (onComplete) onComplete();
         }
 
         iteration += 1 / 3;
       }, 30);
     };
 
-    const timeout = setTimeout(startScramble, delay);
+    startScramble();
 
     return () => {
       clearInterval(interval);
-      clearTimeout(timeout);
     };
-  }, [text, delay]);
+  }, [text, isMounted, onComplete]);
 
   return <span className={className}>{displayText}</span>;
 }
