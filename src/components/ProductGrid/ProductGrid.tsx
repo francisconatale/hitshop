@@ -1,7 +1,12 @@
-import { apparelProducts, prints } from './types';
-import { texts } from './texts';
+"use client";
 
-function ProductCard({ product }: { product: import('./types').Product }) {
+import Marquee from '../Marquee';
+import ScrambleText from '../ScrambleText';
+import { Product, Print } from './types';
+import { texts } from './texts';
+import { useSystem } from '@/context/SystemContext';
+
+function ProductCard({ product }: { product: Product }) {
   return (
     <div className="border-8 border-on-surface bg-surface group cursor-pointer flex flex-col">
       <div className="aspect-[4/5] bg-surface-container overflow-hidden border-b-8 border-on-surface relative">
@@ -30,7 +35,7 @@ function ProductCard({ product }: { product: import('./types').Product }) {
   );
 }
 
-function PrintCard({ print }: { print: import('./types').Print }) {
+function PrintCard({ print }: { print: Print }) {
   return (
     <div className="relative">
       <div className="bg-surface-container p-8 border-4 border-on-surface mb-6 group overflow-hidden">
@@ -51,13 +56,49 @@ function PrintCard({ print }: { print: import('./types').Print }) {
   );
 }
 
-export default function ProductGrid() {
+interface ProductGridProps {
+  category?: 'cpus' | 'gpus' | 'apparel' | 'peripherals';
+}
+
+export default function ProductGrid({ category }: ProductGridProps) {
+  const { productsData } = useSystem();
+
+  if (category) {
+    const categoryProducts = productsData[category] || [];
+    
+    // Si es peripherals, usamos el componente PrintCard, si no ProductCard
+    const isPeripherals = category === 'peripherals';
+
+    return (
+      <div className="p-8">
+        <div className="mb-16">
+          <h1 className="text-huge font-black uppercase tracking-tighter border-b-[16px] border-on-surface pb-4">
+            <ScrambleText text={category.toUpperCase()} />
+          </h1>
+        </div>
+        {categoryProducts.length > 0 ? (
+          <section className={`grid grid-cols-1 ${isPeripherals ? 'md:grid-cols-3 gap-12' : 'md:grid-cols-2 gap-8'} mb-24`}>
+            {categoryProducts.map((item: any) => (
+              isPeripherals 
+                ? <PrintCard key={item.id} print={item} />
+                : <ProductCard key={item.id} product={item} />
+            ))}
+          </section>
+        ) : (
+          <div className="py-20 border-8 border-dashed border-on-surface/20 flex flex-col items-center justify-center mb-24">
+            <p className="text-2xl font-black uppercase opacity-30">No hardware detected in this node</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="p-8">
         <div className="mb-16">
           <h1 className="text-huge font-black uppercase tracking-tighter border-b-[16px] border-on-surface pb-4">
-            {texts.heroTitle}
+            <ScrambleText text={texts.heroTitle} />
           </h1>
           <div className="flex justify-between items-end mt-4">
             <p className="max-w-xl font-medium text-lg leading-tight">
@@ -66,43 +107,25 @@ export default function ProductGrid() {
             <span className="text-xs font-black bg-on-surface text-surface px-4 py-2 uppercase">{texts.dropLabel}</span>
           </div>
         </div>
-
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-          {apparelProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </section>
-
-        <section className="border-t-[16px] border-on-surface pt-16">
-          <div className="flex justify-between items-start mb-12">
-            <h2 className="text-huge font-black uppercase tracking-tighter leading-none">{texts.peripheralsTitle}</h2>
-            <div className="text-right">
-              <p className="font-bold text-2xl uppercase italic">{texts.peripheralsSubtitle}</p>
-              <p className="text-sm font-medium">{texts.peripheralsDescription}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {prints.map((print) => (
-              <PrintCard key={print.id} print={print} />
-            ))}
-          </div>
-        </section>
       </div>
 
-      <footer className="mt-24 bg-on-surface text-surface py-20 px-8 overflow-hidden">
+      <footer className="mt-24 bg-on-surface text-surface py-20 px-0 overflow-hidden">
         <div className="flex flex-col space-y-4">
-          <div className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter whitespace-nowrap opacity-10 -ml-20">
-            {texts.footerBigText[0]}
-          </div>
-          <div className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter whitespace-nowrap text-primary-container">
-            {texts.footerBigText[1]}
-          </div>
-          <div className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter whitespace-nowrap opacity-10 ml-40">
-            {texts.footerBigText[2]}
-          </div>
+          <Marquee 
+            text={texts.footerBigText[0]} 
+            className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter opacity-10" 
+          />
+          <Marquee 
+            text={texts.footerBigText[1]} 
+            className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter text-primary-container" 
+            reverse 
+          />
+          <Marquee 
+            text={texts.footerBigText[2]} 
+            className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter opacity-10" 
+          />
         </div>
-        <div className="mt-20 flex justify-between items-end border-t border-surface/20 pt-8 font-bold uppercase tracking-widest text-xs">
+        <div className="mt-20 px-8 flex justify-between items-end border-t border-surface/20 pt-8 font-bold uppercase tracking-widest text-xs">
           <span>© {texts.copyright}</span>
           <div className="flex gap-12">
             <a className="hover:text-primary-container" href="#">
