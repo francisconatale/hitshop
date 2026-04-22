@@ -1,5 +1,6 @@
 import Header from "./Header";
 import Footer from "./Footer";
+import ClientOnly from "../utils/ClientOnly";
 
 export default function PageLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +10,9 @@ export default function PageLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-grow">
         {children}
       </main>
-      <Footer />
+      <ClientOnly>
+        <Footer />
+      </ClientOnly>
     </div>
   );
 }

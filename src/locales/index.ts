@@ -9,7 +9,6 @@ export const navItems = [
 export const sidebar = {
   title: "HITSHOP",
   subtitle: "RAW SILICON POWER",
-  cart: "CART",
 };
 
 export const productTexts = {

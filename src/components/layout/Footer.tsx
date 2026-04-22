@@ -1,27 +1,36 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Marquee from "@/components/ui/Marquee";
 import { productTexts } from "@/locales";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   return (
-    <footer className="mt-24 bg-on-surface text-surface py-20 px-0 overflow-hidden">
-      <div className="flex flex-col space-y-4">
-        <Marquee 
-          text={productTexts.footerBigText[0]} 
-          className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter opacity-10" 
-        />
-        <Marquee 
-          text={productTexts.footerBigText[1]} 
-          className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter text-primary-container" 
-          reverse 
-        />
-        <Marquee 
-          text={productTexts.footerBigText[2]} 
-          className="text-[12rem] font-black uppercase leading-[0.75] tracking-tighter opacity-10" 
-        />
-      </div>
-      <div className="mt-20 px-8 flex justify-between items-end border-t border-surface/20 pt-8 font-bold uppercase tracking-widest text-xs">
+    <footer className="mt-16 md:mt-24 bg-on-surface text-surface py-12 md:py-20 px-0 overflow-hidden">
+      {isHome && (
+        <div className="flex flex-col space-y-2 md:space-y-4 mb-16 md:mb-20">
+          <Marquee 
+            text={productTexts.footerBigText[0]} 
+            className="text-[6rem] md:text-[12rem] font-black uppercase leading-[0.75] tracking-tighter opacity-10" 
+          />
+          <Marquee 
+            text={productTexts.footerBigText[1]} 
+            className="text-[6rem] md:text-[12rem] font-black uppercase leading-[0.75] tracking-tighter text-primary-container" 
+            reverse 
+          />
+          <Marquee 
+            text={productTexts.footerBigText[2]} 
+            className="text-[6rem] md:text-[12rem] font-black uppercase leading-[0.75] tracking-tighter opacity-10" 
+          />
+        </div>
+      )}
+      
+      <div className={`px-4 md:px-8 flex flex-col sm:flex-row items-start sm:items-end justify-between border-t border-surface/20 pt-8 font-bold uppercase tracking-widest text-[8px] sm:text-xs ${isHome ? 'mt-16 md:mt-20' : 'mt-0'}`}>
         <span>© {productTexts.copyright}</span>
-        <div className="flex gap-12">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-12 mt-4 sm:mt-0">
           <a className="hover:text-primary-container" href="#">
             {productTexts.footerLinks.terms}
           </a>

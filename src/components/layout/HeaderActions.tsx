@@ -1,24 +1,41 @@
 "use client";
-
-import { sidebar } from "@/locales";
+import { useAuth } from "@/context/AuthContext";
 
 export default function HeaderActions() {
+  const { user, logout } = useAuth();
+
   return (
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-2">
         <span className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2">
           search
         </span>
-        <span className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2">
-          account_circle
-        </span>
+        
+        {user ? (
+          <div className="flex items-center gap-2 group relative">
+            <div className="flex flex-col items-end">
+              <span className="font-black uppercase text-[10px] tracking-widest opacity-50">Authorized_Node</span>
+              <span className="font-black uppercase text-xs">
+                {user.displayName || user.email?.split('@')[0]}
+              </span>
+            </div>
+            <button 
+              onClick={() => logout()}
+              className="material-symbols-outlined text-3xl cursor-pointer hover:text-error transition-colors p-2"
+              title="Logout"
+            >
+              logout
+            </button>
+          </div>
+        ) : (
+          <button 
+            onClick={() => window.location.href = '/login'}
+            className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2"
+          >
+            account_circle
+          </button>
+        )}
       </div>
-      
-      <button className="flex items-center gap-3 bg-on-surface text-surface px-6 py-3 font-black transition-all hover:bg-primary-container hover:text-on-surface border-4 border-on-surface">
-        <span className="material-symbols-outlined">shopping_cart</span>
-        <span className="uppercase hidden sm:inline">{sidebar.cart}</span>
-        <span className="text-xs border-2 border-current px-2 py-0.5">3</span>
-      </button>
     </div>
   );
 }

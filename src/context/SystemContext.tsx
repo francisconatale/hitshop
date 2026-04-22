@@ -1,22 +1,38 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { User } from "firebase/auth";
+import { authService } from '@/lib/auth/auth';
 import { initialProductsData } from '@/components/product/types';
 
 interface SystemContextType {
+  user: User | null;
+  loading: boolean;
   categories: string[];
   productsData: any;
   addCategory: (name: string) => void;
   removeCategory: (name: string) => void;
+  logout: () => Promise<void>;
 }
 
 const SystemContext = createContext<SystemContextType | undefined>(undefined);
 
 export function SystemProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [productsData, setProductsData] = useState(initialProductsData);
   const [categories, setCategories] = useState<string[]>([]);
 
-  // Cargar categorías iniciales y persistencia (mockeada con localStorage)
+  useEffect(() => {
+    const unsubscribe = authService.onAuthStateChange((currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Cargar categorías iniciales y persistencia
   useEffect(() => {
     const saved = localStorage.getItem('hitshop_categories');
     if (saved) {
@@ -40,7 +56,7 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
     
     const newData = {
       ...productsData,
-      [lowerName]: [] // Nueva categoría vacía
+      [lowerName]: []
     };
     saveState(newData);
   };
@@ -51,8 +67,21 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
     saveState(rest);
   };
 
+  const logout = async () => {
+    await authService.logout();
+    window.location.href = '/login';
+  };
+
   return (
-    <SystemContext.Provider value={{ categories, productsData, addCategory, removeCategory }}>
+    <SystemContext.Provider value={{ 
+      user, 
+      loading, 
+      categories, 
+      productsData, 
+      addCategory, 
+      removeCategory,
+      logout 
+    }}>
       {children}
     </SystemContext.Provider>
   );
