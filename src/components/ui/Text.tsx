@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { useLocalesContext } from "@/context/LocalesContext";
 
 interface TextProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
@@ -9,18 +9,15 @@ interface TextProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'childre
 }
 
 function getNestedValue(obj: any, path: string): string {
+  if (!obj) return "";
   return path.split('.').reduce((acc, part) => acc && acc[part], obj) as string || "";
 }
 
 export function Text({ path, className, children, ...props }: TextProps) {
   const { locales, isEditMode, updateLocale } = useLocalesContext();
-  const [value, setValue] = useState("");
   const editableRef = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
-    const remoteValue = getNestedValue(locales, path);
-    setValue(remoteValue);
-  }, [locales, path]);
+  const value = useMemo(() => getNestedValue(locales, path), [locales, path]);
 
   const handleBlur = () => {
     if (!editableRef.current) return;

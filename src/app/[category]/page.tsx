@@ -1,21 +1,29 @@
-"use client";
-
-import ProductGrid from "@/components/product/ProductGrid";
+import { Suspense } from "react";
+import ProductListFetcher from "@/components/product/ProductListFetcher";
+import { ProductGridSkeleton } from "@/components/product/ProductSkeleton";
+import { CategoryHeader } from "@/components/product/ProductGrid";
 import { notFound } from "next/navigation";
-import { useSystem } from "@/context/SystemContext";
-import { use } from "react";
 
-export default function DynamicCategoryPage({
+const VALID_CATEGORIES = ['gpus', 'cpus', 'systems', 'peripherals'];
+
+export default async function DynamicCategoryPage({
   params,
 }: {
   params: Promise<{ category: string }>;
 }) {
-  const { category } = use(params);
-  const { categories } = useSystem();
+  const { category } = await params;
+  const lowerCategory = category.toLowerCase();
 
-  if (categories.length > 0 && !categories.includes(category.toLowerCase())) {
+  if (!VALID_CATEGORIES.includes(lowerCategory)) {
     notFound();
   }
 
-  return <ProductGrid category={category.toLowerCase()} />;
+  return (
+    <>
+      <CategoryHeader category={lowerCategory} />
+      <Suspense fallback={<ProductGridSkeleton />}>
+        <ProductListFetcher category={lowerCategory} />
+      </Suspense>
+    </>
+  );
 }

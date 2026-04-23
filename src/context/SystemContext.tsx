@@ -58,7 +58,7 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('hitshop_categories', JSON.stringify(newData));
   };
 
-  const addCategory = (name: string) => {
+  const addCategory = React.useCallback((name: string) => {
     const lowerName = name.toLowerCase();
     if (productsData[lowerName as keyof typeof productsData]) return;
     
@@ -67,26 +67,31 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
       [lowerName]: []
     };
     saveState(newData);
-  };
+  }, [productsData]);
 
-  const removeCategory = (name: string) => {
+  const removeCategory = React.useCallback((name: string) => {
     const lowerName = name.toLowerCase();
     const { [lowerName as any]: removed, ...rest } = productsData as any;
     saveState(rest);
-  };
+  }, [productsData]);
 
-  const addProductToState = (category: string, product: any) => {
+  const addProductToState = React.useCallback((category: string, product: any) => {
     const lowerCat = category.toLowerCase();
     const current = (productsData as any)[lowerCat] ?? [];
     const newData = { ...productsData, [lowerCat]: [...current, product] };
     saveState(newData);
-  };
+  }, [productsData]);
 
-  const setCategoryProducts = (category: string, products: any[]) => {
+  const setCategoryProducts = React.useCallback((category: string, products: any[]) => {
     const lowerCat = category.toLowerCase();
+    
+    // Evitar actualización si los datos son idénticos (simple check de longitud)
+    const currentProducts = (productsData as any)[lowerCat] || [];
+    if (currentProducts.length === products.length) return;
+
     const newData = { ...productsData, [lowerCat]: products };
     saveState(newData);
-  };
+  }, [productsData]);
 
   const logout = async () => {
     await authService.logout();
