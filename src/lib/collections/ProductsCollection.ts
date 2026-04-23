@@ -1,8 +1,29 @@
-import { doc, setDoc, updateDoc, getDocs, deleteDoc, getDoc, collection, Firestore } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getDocs, deleteDoc, getDoc, collection, Firestore, query, where } from "firebase/firestore";
 import { Product, PublicProduct, PrivateProduct, ProductAdminRequest, UpdateProductRequest } from "@/types/product";
 import { validateProduct, isProductValid } from "@/lib/validation/product";
 
 export class ProductsCollection {
+
+    /**
+     * Obtiene los productos por categoría.
+     */
+    async getProductsByCategory(db: Firestore, category: string, isAdmin: boolean): Promise<PublicProduct[] | Product[]> {
+        const q = query(collection(db, "products"), where("category", "==", category));
+        const snap = await getDocs(q);
+        const publicProducts = snap.docs.map(d => ({ id: d.id, ...d.data() } as PublicProduct));
+
+        if (!isAdmin) {
+            return publicProducts;
+        }
+
+        const enriched = await Promise.all(publicProducts.map(async (product) => {
+            const privateSnap = await getDoc(doc(db, "privateProducts", product.id));
+            const privateData = privateSnap.exists() ? privateSnap.data() as PrivateProduct : {} as PrivateProduct;
+            return { ...product, ...privateData } as Product;
+        }));
+
+        return enriched;
+    }
 
     /**
      * Obtiene los productos según el rol.
@@ -89,6 +110,25 @@ export class ProductsCollection {
 
         await Promise.all(promises);
         return id;
+    }
+
+    /**
+     * Obtiene un producto por su ID.
+     */
+    async getProductById(db: Firestore, id: string, isAdmin: boolean): Promise<Product | PublicProduct | null> {
+        const publicSnap = await getDoc(doc(db, "products", id));
+        if (!publicSnap.exists()) return null;
+
+        const publicData = { id: publicSnap.id, ...publicSnap.data() } as PublicProduct;
+
+        if (!isAdmin) {
+            return publicData;
+        }
+
+        const privateSnap = await getDoc(doc(db, "privateProducts", id));
+        const privateData = privateSnap.exists() ? privateSnap.data() as PrivateProduct : {} as PrivateProduct;
+
+        return { ...publicData, ...privateData } as Product;
     }
 
     /**

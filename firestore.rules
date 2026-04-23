@@ -45,5 +45,15 @@ service cloud.firestore {
                     && request.resource.data.role == "user";
       allow update: if false;
     }
+
+    // ───────────────────────────────────────────────
+    // CONFIGURACIONES GLOBALES (Ej: Textos / Locales)
+    // Lectura: cualquiera (necesario para ver la web)
+    // Escritura: solo admins
+    // ───────────────────────────────────────────────
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }

@@ -3,7 +3,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from "firebase/auth";
 import { authService } from '@/lib/auth/auth';
-import { initialProductsData } from '@/components/product/types';
+
+const DEFAULT_CATEGORIES = {
+  cpus: [],
+  gpus: [],
+  apparel: [],
+  peripherals: []
+};
 
 interface SystemContextType {
   user: User | null;
@@ -12,6 +18,8 @@ interface SystemContextType {
   productsData: any;
   addCategory: (name: string) => void;
   removeCategory: (name: string) => void;
+  addProductToState: (category: string, product: any) => void;
+  setCategoryProducts: (category: string, products: any[]) => void;
   logout: () => Promise<void>;
 }
 
@@ -20,7 +28,7 @@ const SystemContext = createContext<SystemContextType | undefined>(undefined);
 export function SystemProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [productsData, setProductsData] = useState(initialProductsData);
+  const [productsData, setProductsData] = useState(DEFAULT_CATEGORIES);
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
@@ -40,7 +48,7 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
       setProductsData(parsed);
       setCategories(Object.keys(parsed));
     } else {
-      setCategories(Object.keys(initialProductsData));
+      setCategories(Object.keys(DEFAULT_CATEGORIES));
     }
   }, []);
 
@@ -67,6 +75,19 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
     saveState(rest);
   };
 
+  const addProductToState = (category: string, product: any) => {
+    const lowerCat = category.toLowerCase();
+    const current = (productsData as any)[lowerCat] ?? [];
+    const newData = { ...productsData, [lowerCat]: [...current, product] };
+    saveState(newData);
+  };
+
+  const setCategoryProducts = (category: string, products: any[]) => {
+    const lowerCat = category.toLowerCase();
+    const newData = { ...productsData, [lowerCat]: products };
+    saveState(newData);
+  };
+
   const logout = async () => {
     await authService.logout();
     window.location.href = '/login';
@@ -80,6 +101,8 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
       productsData, 
       addCategory, 
       removeCategory,
+      addProductToState,
+      setCategoryProducts,
       logout 
     }}>
       {children}

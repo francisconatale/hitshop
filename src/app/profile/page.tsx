@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import PageLayout from "@/components/layout/PageLayout";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const { user, userData, loading } = useAuth();
@@ -47,6 +48,28 @@ export default function ProfilePage() {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Admin Quick Access - Solo visible para administradores */}
+          {userData?.role === 'admin' && (
+            <section className="md:col-span-2 bg-primary/5 border border-primary/20 p-8 flex flex-col md:flex-row items-center justify-between gap-6 mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary text-on-primary flex items-center justify-center rounded-sm">
+                  <span className="material-symbols-outlined text-3xl">terminal</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-black uppercase tracking-tight italic">Privileged_Access_Detected</h2>
+                  <p className="text-xs opacity-70 font-medium">Your node has root privileges. Access the administrative terminal to manage the system.</p>
+                </div>
+              </div>
+              <Link 
+                href="/admin"
+                className="bg-primary text-on-primary px-8 py-3 font-black uppercase text-xs tracking-[0.2em] hover:opacity-90 transition-all flex items-center gap-2"
+              >
+                Go_To_Admin_Console
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </Link>
+            </section>
+          )}
+
           <section className="bg-surface-variant p-8 border border-outline-variant">
             <h2 className="text-xl font-black uppercase tracking-tight mb-6 border-b border-outline-variant pb-2">
               System_Information

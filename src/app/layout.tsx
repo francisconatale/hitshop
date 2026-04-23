@@ -9,6 +9,7 @@ import ClientOnly from "@/components/utils/ClientOnly";
 import DevConsole from "@/components/layout/DevConsole";
 import { AuthProvider } from "@/context/AuthContext";
 import { SystemProvider } from "@/context/SystemContext";
+import { LocalesProvider } from "@/context/LocalesContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,19 +34,21 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} min-h-screen bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container`}>
         <AuthProvider>
-          <SystemProvider>
-            <div className="min-h-screen bg-surface text-on-surface flex flex-col relative">
-              <div className="bg-noise" />
-              <Header />
-              <main className="flex-grow">
-                {children}
-              </main>
-              <ClientOnly>
-                <Footer />
-              </ClientOnly>
-            </div>
-            <DevConsole />
-          </SystemProvider>
+          <LocalesProvider>
+            <SystemProvider>
+              <div className="min-h-screen bg-surface text-on-surface flex flex-col relative">
+                <div className="bg-noise" />
+                <Header />
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <ClientOnly>
+                  <Footer />
+                </ClientOnly>
+              </div>
+              <DevConsole />
+            </SystemProvider>
+          </LocalesProvider>
         </AuthProvider>
       </body>
     </html>

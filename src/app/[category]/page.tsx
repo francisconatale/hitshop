@@ -17,5 +17,5 @@ export default function DynamicCategoryPage({
     notFound();
   }
 
-  return <ProductGrid category={category.toLowerCase() as any} />;
+  return <ProductGrid category={category.toLowerCase()} />;
 }

@@ -1,88 +1,58 @@
 "use client";
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import ScrambleText from '@/components/ui/ScrambleText';
-import { Product, Print } from './types';
-import { productTexts as texts } from '@/locales';
+import { Text } from '@/components/ui/Text';
 import { useSystem } from '@/context/SystemContext';
+import { useAuth } from '@/context/AuthContext';
+import { AddProductForm } from '@/components/product/AddProductForm';
+import ProductCard from '@/components/product/ProductCard';
+import productsCollection from '@/lib/collections/ProductsCollection';
+import { db } from '@/lib/firebase';
 
-function ProductCard({ product }: { product: Product }) {
-  const systemId = `IDX.${product.name.substring(0, 3).toUpperCase()}.${Math.floor(Math.random() * 999)}`;
-
-  return (
-    <div className="group border-r border-b border-on-surface bg-surface flex flex-col relative overflow-hidden hover:bg-on-surface hover:text-surface transition-all duration-300">
-      <div className="flex justify-between items-center px-3 py-1.5 border-b border-on-surface/10 font-mono text-[7px] font-black tracking-widest opacity-40">
-        <span>{systemId}</span>
-        <span className="flex items-center gap-1">
-          <span className="w-1 h-1 bg-primary-fixed animate-pulse"></span>
-          ONLINE
-        </span>
-      </div>
-
-      <div className="aspect-square relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
-        <img
-          alt={product.name}
-          src={product.image}
-          className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-primary-fixed/0 group-hover:bg-primary-fixed/5 transition-colors" />
-      </div>
-      
-      <div className="p-4 flex flex-col flex-grow border-t border-on-surface/10">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="text-xl font-black uppercase tracking-tighter leading-none group-hover:text-primary-fixed transition-colors">
-            {product.name}
-          </h3>
-          <span className="text-[8px] font-mono opacity-30">v1.0</span>
-        </div>
-
-        <div className="mt-auto flex justify-between items-end">
-          <div className="flex flex-col">
-            <span className="text-[7px] font-mono opacity-30 uppercase">Price</span>
-            <span className="text-xl font-black tabular-nums tracking-tighter text-primary-fixed">${product.price}</span>
-          </div>
-          
-          <button className="bg-surface text-on-surface border-2 border-on-surface px-4 py-1.5 font-black uppercase text-[10px] brutal-shadow transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-primary-fixed">
-            {texts.addButton}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PrintCard({ print }: { print: Print }) {
-  return (
-    <div className="group border-r border-b border-on-surface p-3 flex flex-col bg-surface hover:bg-primary-container/5 transition-all">
-      <div className="aspect-[4/5] bg-surface-container mb-3 border border-on-surface/10 overflow-hidden grayscale group-hover:grayscale-0 transition-all">
-        <img
-          alt={print.name}
-          src={print.image}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-      </div>
-      <div className="flex justify-between items-end mt-auto">
-        <div className="flex flex-col">
-          <span className="text-[7px] font-mono opacity-30 uppercase">{print.series}</span>
-          <h4 className="text-md font-black uppercase tracking-tighter">{print.name}</h4>
-        </div>
-        <span className="text-md font-black tabular-nums">${print.price}</span>
-      </div>
-    </div>
-  );
-}
 
 export default function ProductGrid({ category }: { category?: string }) {
-  const { productsData } = useSystem();
+  const { productsData, setCategoryProducts } = useSystem();
+  const { userData, loading: authLoading } = useAuth();
+  const isAdmin = userData?.role === 'admin';
   const [isHeroComplete, setIsHeroComplete] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
-  // Memorizamos la función para que no cambie en cada renderizado
   const handleHeroComplete = useCallback(() => {
     setIsHeroComplete(true);
   }, []);
 
+  useEffect(() => {
+    if (!category) return;
+    if (authLoading) return;
+    const cat = category;
+
+    async function fetchProducts() {
+      try {
+        setLoadingProducts(true);
+        const data = await productsCollection.getProductsByCategory(db, cat, isAdmin);
+        console.log(data);
+        setCategoryProducts(cat, data);
+      } catch (error) {
+        console.error("Error loading products:", error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    }
+    
+    fetchProducts();
+  }, [category, isAdmin, authLoading]);
+
+  const CATEGORY_ICONS: Record<string, string> = {
+    gpus: 'memory',
+    cpus: 'developer_board',
+    systems: 'desktop_windows',
+    peripherals: 'keyboard',
+  };
+
   if (category) {
+    const categoryIcon = CATEGORY_ICONS[category] ?? 'inventory_2';
     const categoryProducts = (productsData as any)[category] || [];
 
     return (
@@ -91,7 +61,7 @@ export default function ProductGrid({ category }: { category?: string }) {
           <div className="flex items-center gap-4 mb-4 sm:mb-0">
              <div className="bg-on-surface text-surface p-2 aspect-square flex items-center justify-center">
                 <span className="material-symbols-outlined text-xl">
-                  {category === 'cpus' ? 'developer_board' : category === 'gpus' ? 'memory' : 'inventory_2'}
+                  {categoryIcon}
                 </span>
              </div>
              <div>
@@ -115,8 +85,17 @@ export default function ProductGrid({ category }: { category?: string }) {
           </div>
         </div>
 
-        <div className="border-l border-t border-on-surface">
-          {categoryProducts.length > 0 ? (
+        {isAdmin && (
+          <AddProductForm />
+        )}
+
+        <div className="border-l border-t border-on-surface min-h-[400px] relative">
+          {loadingProducts ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface/50 backdrop-blur-[2px] z-20">
+               <span className="w-12 h-12 border-4 border-on-surface border-t-primary-fixed animate-spin mb-4"></span>
+               <span className="font-mono text-[10px] font-black uppercase tracking-[0.4em] animate-pulse">Synchronizing_Catalog...</span>
+            </div>
+          ) : categoryProducts.length > 0 ? (
             <section className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4`}>
               {categoryProducts.map((item: any) => (
                 <ProductCard key={item.id} product={item} />
@@ -150,18 +129,20 @@ export default function ProductGrid({ category }: { category?: string }) {
             <div className="absolute top-0 left-0 w-4 h-4 sm:w-8 sm:h-8 border-t-2 border-l-2 border-primary-fixed/20" />
             <div className="absolute top-0 right-0 w-2 h-4 sm:w-2 sm:h-8 border-t-2 border-r-2 border-primary-fixed/20" />
 
-            <h1 className="text-[4.5rem] sm:text-[6rem] md:text-[8rem] lg:text-[12rem] font-black uppercase tracking-tighter leading-[0.85] sm:leading-[0.75] text-on-surface relative">
-              <span className="block">
-                <ScrambleText text="SYSTEM" />
-              </span>
-              <span className="block">
-                <ScrambleText 
-                  text="HARDWARE" 
-                  onComplete={handleHeroComplete}
-                />
-              </span>
+            <h1 className="text-[4.5rem] sm:text-[6rem] md:text-[8rem] lg:text-[12rem] font-black uppercase tracking-tighter leading-[0.85] sm:leading-[0.75] text-on-surface relative flex flex-col">
+              <Text path="productTexts.heroTitle">
+                {(text) => {
+                  const parts = text.split(" ");
+                  return (
+                    <>
+                      <span className="block"><ScrambleText text={parts[0] || ""} /></span>
+                      <span className="block"><ScrambleText text={parts.slice(1).join(" ") || ""} onComplete={handleHeroComplete} /></span>
+                    </>
+                  );
+                }}
+              </Text>
               {/* Floating Tech Marker */}
-              <span className="absolute -right-2 sm:-right-4 top-0 text-[7px] sm:text-[10px] font-mono text-primary-fixed/40 [writing-mode:vertical-lr]">
+              <span className="absolute -right-2 sm:-right-4 top-0 text-[7px] sm:text-[10px] font-mono text-primary-fixed/40 [writing-mode:vertical-lr] pointer-events-none">
                 PRT_77-X
               </span>
             </h1>
@@ -175,12 +156,8 @@ export default function ProductGrid({ category }: { category?: string }) {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="flex flex-col items-start lg:items-end gap-3 sm:gap-6 lg:mb-4 px-2 sm:px-0"
               >
-                <span className="text-xl sm:text-2xl font-black bg-on-surface text-surface px-4 sm:px-6 py-1 sm:py-2 uppercase rotate-1 brutal-shadow-primary">
-                  {texts.dropLabel}
-                </span>
-                <p className="max-w-xs sm:max-w-md font-bold text-base sm:text-xl leading-[1.1] text-left lg:text-right uppercase text-on-surface-variant">
-                  {texts.heroDescription}
-                </p>
+                <Text path="productTexts.dropLabel" className="text-xl sm:text-2xl font-black bg-on-surface text-surface px-4 sm:px-6 py-1 sm:py-2 uppercase rotate-1 brutal-shadow-primary inline-block" />
+                <Text path="productTexts.heroDescription" className="max-w-xs sm:max-w-md font-bold text-base sm:text-xl leading-[1.1] text-left lg:text-right uppercase text-on-surface-variant" />
               </motion.div>
             )}
           </AnimatePresence>

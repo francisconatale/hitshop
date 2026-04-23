@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/auth/auth';
-import { AuthProvider } from '@/lib/auth/types';
+import { AuthProvider, AuthCredentials } from '@/lib/auth/types';
 
 export function useAuthForm(mode: 'login' | 'register') {
   const [email, setEmail] = useState('');
@@ -20,17 +20,13 @@ export function useAuthForm(mode: 'login' | 'register') {
     
     try {
       if (provider === 'email') {
-        await authService[mode]('email', { email, displayName, password} as RegisterRequest);
+        await authService[mode]('email', { email, displayName, password} as AuthCredentials);
       } else {
         await authService[mode]('google');
       }
             
-      try {
-        router.push('/');
-        router.refresh();
-      } catch (navError) {
-        console.log("useAuthForm: Error de navegación (ignorable si redirige igual):", navError);
-      }
+      router.push('/');
+      router.refresh();
 
     } catch (err: any) {
       console.error(`useAuthForm: ERROR CAPTURADO EN ${mode.toUpperCase()}:`, err);
