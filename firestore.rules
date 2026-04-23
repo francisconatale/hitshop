@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función helper: verifica si el usuario autenticado es admin
+    // leyendo su documento en la colección "users"
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ───────────────────────────────────────────────
+    // PRODUCTOS PÚBLICOS
+    // Lectura: cualquiera (incluso sin cuenta)
+    // Escritura: solo admins
+    // ───────────────────────────────────────────────
+    match /products/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ───────────────────────────────────────────────
+    // PRODUCTOS PRIVADOS (margen, costo, descripción)
+    // Solo admins pueden leer y escribir
+    // ───────────────────────────────────────────────
+    match /privateProducts/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // ───────────────────────────────────────────────
+    // USUARIOS
+    // Lectura: solo el propio usuario
+    // Creación: solo si el rol es "user" (nadie se auto-asigna admin)
+    // Update: bloqueado (nadie cambia roles)
+    // ───────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.role == "user";
+      allow update: if false;
+    }
+  }
+}

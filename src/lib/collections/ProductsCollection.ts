@@ -1,0 +1,106 @@
+import { doc, setDoc, updateDoc, getDocs, deleteDoc, getDoc, collection, Firestore } from "firebase/firestore";
+import { Product, PublicProduct, PrivateProduct, ProductAdminRequest, UpdateProductRequest } from "@/types/product";
+import { validateProduct, isProductValid } from "@/lib/validation/product";
+
+export class ProductsCollection {
+
+    /**
+     * Obtiene los productos según el rol.
+     * - Usuario: solo campos públicos de `products/{id}` (1 query, sin datos privados).
+     * - Admin: combina `products/{id}` + `privateProducts/{id}` para el documento completo.
+     */
+    async getProducts(db: Firestore, isAdmin: boolean): Promise<PublicProduct[] | Product[]> {
+        const snap = await getDocs(collection(db, "products"));
+        const publicProducts = snap.docs.map(d => ({ id: d.id, ...d.data() } as PublicProduct));
+
+        if (!isAdmin) {
+            return publicProducts;
+        }
+
+        // Para admins: enriquecemos con datos privados en paralelo
+        const enriched = await Promise.all(publicProducts.map(async (product) => {
+            const privateSnap = await getDoc(doc(db, "privateProducts", product.id));
+            const privateData = privateSnap.exists() ? privateSnap.data() as PrivateProduct : {} as PrivateProduct;
+            return { ...product, ...privateData } as Product;
+        }));
+
+        return enriched;
+    }
+
+    /**
+     * Crea un producto en 2 documentos: público y privado.
+     */
+    async createProduct(db: Firestore, request: ProductAdminRequest): Promise<string> {
+        const errors = validateProduct(request);
+        if (!isProductValid(errors)) {
+            throw new Error(JSON.stringify({ message: "Validation failed", errors }));
+        }
+
+        const id = crypto.randomUUID();
+
+        const publicData: PublicProduct = {
+            id,
+            name: request.name,
+            price: request.price,
+            image: request.image,
+            category: request.category,
+            selled: request.selled,
+        };
+
+        const privateData: PrivateProduct = {
+            purchasePrice: request.purchasePrice,
+            margin: request.margin,
+            description: request.description,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        await Promise.all([
+            setDoc(doc(db, "products", id), publicData),
+            setDoc(doc(db, "privateProducts", id), privateData),
+        ]);
+
+        return id;
+    }
+
+    /**
+     * Actualiza los campos indicados en el documento correspondiente.
+     */
+    async updateProduct(db: Firestore, id: string, request: UpdateProductRequest): Promise<string> {
+        const publicUpdates: any = {};
+        if (request.name !== undefined) publicUpdates.name = request.name;
+        if (request.price !== undefined) publicUpdates.price = request.price;
+        if (request.image !== undefined) publicUpdates.image = request.image;
+        if (request.category !== undefined) publicUpdates.category = request.category;
+        if (request.selled !== undefined) publicUpdates.selled = request.selled;
+
+        const privateUpdates: any = { updatedAt: new Date() };
+        if (request.purchasePrice !== undefined) privateUpdates.purchasePrice = request.purchasePrice;
+        if (request.margin !== undefined) privateUpdates.margin = request.margin;
+        if (request.description !== undefined) privateUpdates.description = request.description;
+
+        const promises = [];
+        if (Object.keys(publicUpdates).length > 0) {
+            promises.push(updateDoc(doc(db, "products", id), publicUpdates));
+        }
+        if (Object.keys(privateUpdates).length > 1) {
+            promises.push(updateDoc(doc(db, "privateProducts", id), privateUpdates));
+        }
+
+        await Promise.all(promises);
+        return id;
+    }
+
+    /**
+     * Elimina ambos documentos del producto.
+     */
+    async deleteProduct(db: Firestore, id: string): Promise<string> {
+        await Promise.all([
+            deleteDoc(doc(db, "products", id)),
+            deleteDoc(doc(db, "privateProducts", id)),
+        ]);
+        return id;
+    }
+}
+
+export default new ProductsCollection();

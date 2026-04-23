@@ -1,6 +1,8 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
+// He revertido a hardcoded para asegurar que la conexión funcione sin dependencias de .env
 const firebaseConfig = {
   apiKey: "AIzaSyBhIetNe8keBk5MTlw7nlbrz_XCuiQHVtg",
   authDomain: "hitshop-64be0.firebaseapp.com",
@@ -11,7 +13,10 @@ const firebaseConfig = {
   measurementId: "G-W76112L2RP"
 };
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { app, auth };
+console.log("Firebase: Initialized (with Firestore)");
+
+export { app, auth, db };

@@ -5,6 +5,7 @@ export type AuthProvider = 'email' | 'google';
 export interface AuthCredentials {
   email?: string;
   password?: string;
+  displayName?: string;
 }
 
 export interface ILoginStrategy {
