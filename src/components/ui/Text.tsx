@@ -2,6 +2,7 @@
 
 import React, { useRef, useMemo } from "react";
 import { useLocalesContext } from "@/context/LocalesContext";
+import * as fallbackLocales from "@/locales/index";
 
 interface TextProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
   path: string;
@@ -10,14 +11,22 @@ interface TextProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'childre
 
 function getNestedValue(obj: any, path: string): string {
   if (!obj) return "";
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj) as string || "";
+  const value = path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  return typeof value === 'string' ? value : "";
 }
 
 export function Text({ path, className, children, ...props }: TextProps) {
   const { locales, isEditMode, updateLocale } = useLocalesContext();
   const editableRef = useRef<HTMLSpanElement>(null);
 
-  const value = useMemo(() => getNestedValue(locales, path), [locales, path]);
+  const value = useMemo(() => {
+    // Try to get value from context (might be updated from DB/Cache)
+    const contextValue = getNestedValue(locales, path);
+    if (contextValue) return contextValue;
+    
+    // Fallback to static file value for SSR and initial hydration
+    return getNestedValue(fallbackLocales, path);
+  }, [locales, path]);
 
   const handleBlur = () => {
     if (!editableRef.current) return;
@@ -56,7 +65,7 @@ export function Text({ path, className, children, ...props }: TextProps) {
   }
 
   return (
-    <span className={className} {...props}>
+    <span className={className} suppressHydrationWarning {...props}>
       {value}
     </span>
   );

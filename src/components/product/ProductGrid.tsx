@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useSystem } from '@/context/SystemContext';
 import { AddProductForm } from '@/components/product/AddProductForm';
 import ProductCard from '@/components/product/ProductCard';
-import { Product, PublicProduct } from './types';
+import { Product, PublicProduct } from '@/types/product';
 
 interface ProductGridProps {
   category?: string;
@@ -121,7 +121,7 @@ export default function ProductGrid({ category, initialProducts = [], children }
   }
 
   return (
-    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-8 sm:py-12 overflow-hidden">
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-8 sm:py-12 overflow-hidden">
       <div className="mb-24 sm:mb-32 relative">
         <div className="absolute -top-8 sm:-top-12 left-0 text-[7px] sm:text-[8px] font-mono font-black text-primary-dim/70 tracking-[0.2em] sm:tracking-[0.3em] uppercase flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1 sm:py-1.5 bg-primary/5 border-l-2 border-primary/30">
            {isHeroComplete ? "SYSTEM_STABLE // NO_ERRORS" : "DECRYPTING_PRIMARY_NODE..."}

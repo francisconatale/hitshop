@@ -22,5 +22,12 @@ export const productTexts = {
     shipping: "Shipping",
     instagram: "Instagram",
   },
-  addButton: "ADD",
+  addButton: "RESERVAR",
 };
+
+export const ticker = [
+  { label: "POWER", value: "RAW SILICON", color: "text-on-surface" },
+  { label: "STATUS", value: "SYSTEM STABLE", color: "text-on-surface" },
+  { label: "ASSETS", value: "VERIFIED ONLY", color: "text-on-surface" },
+  { label: "DROP", value: "01 LIVE NOW", color: "text-error font-black" },
+];

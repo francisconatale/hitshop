@@ -1,5 +1,5 @@
 import ProductCard from "./ProductCard";
-import { Product, PublicProduct } from "./types";
+import { Product, PublicProduct } from "@/types/product";
 
 interface ProductItemsGridProps {
   products: (Product | PublicProduct)[];

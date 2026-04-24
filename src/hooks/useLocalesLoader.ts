@@ -3,11 +3,18 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import localesCollection, { AppLocales } from "@/lib/collections/LocalesCollection";
-import * as fallbackLocales from "@/locales/index";
+import { productTexts, navItems, sidebar, ticker } from "@/locales/index";
 import { getCachedLocales, saveLocalesToCache, mergeLocales } from "@/locales/localesCache";
 
+const INITIAL_LOCALES: AppLocales = {
+  productTexts,
+  navItems,
+  sidebar,
+  ticker
+};
+
 export function useLocalesLoader() {
-  const [locales, setLocales] = useState<AppLocales>(fallbackLocales);
+  const [locales, setLocales] = useState<AppLocales>(INITIAL_LOCALES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
