@@ -1,36 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { db } from "@/lib/firebase";
 import productsCollection from "@/lib/collections/ProductsCollection";
-import { ProductAdminRequest } from "@/types/product";
+import { Product, UpdateProductRequest } from "@/types/product";
 import { ProductValidationErrors, validateProduct, isProductValid } from "@/lib/validation/product";
-import { useSystem } from "@/context/SystemContext";
 
-const EMPTY_FORM: Omit<ProductAdminRequest, 'category'> = {
-  name: "",
-  description: "",
-  price: 0,
-  purchasePrice: 0,
-  margin: 0,
-  image: [],
-  selled: false,
-};
-
-export function useAddProduct() {
-  const pathname = usePathname();
-  const category = pathname.split("/").filter(Boolean)[0] ?? "";
-  const { addProductToState } = useSystem();
-
-  const [form, setForm] = useState(EMPTY_FORM);
+export function useEditProduct(initialProduct: Product) {
+  const [form, setForm] = useState<UpdateProductRequest>({
+    id: initialProduct.id,
+    name: initialProduct.name,
+    description: initialProduct.description || "",
+    price: initialProduct.price,
+    purchasePrice: initialProduct.purchasePrice || 0,
+    margin: initialProduct.margin || 0,
+    image: initialProduct.image || [],
+    category: initialProduct.category,
+    selled: initialProduct.selled || false,
+  });
   const [imageInput, setImageInput] = useState("");
   const [errors, setErrors] = useState<ProductValidationErrors>({});
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const setField = <K extends keyof typeof EMPTY_FORM>(key: K, value: (typeof EMPTY_FORM)[K]) => {
+  const setField = <K extends keyof UpdateProductRequest>(key: K, value: UpdateProductRequest[K]) => {
     setForm(prev => ({ ...prev, [key]: value }));
     setErrors(prev => { const next = { ...prev }; delete next[key as keyof ProductValidationErrors]; return next; });
   };
@@ -38,7 +32,7 @@ export function useAddProduct() {
   const addImage = (url: string) => {
     const trimmed = url.trim();
     if (!trimmed) return;
-    setField("image", [...form.image, trimmed]);
+    setField("image", [...(form.image || []), trimmed]);
     setImageInput("");
   };
 
@@ -67,19 +61,11 @@ export function useAddProduct() {
   };
 
   const removeImage = (index: number) => {
-    setField("image", form.image.filter((_, i) => i !== index));
-  };
-
-  const reset = () => {
-    setForm(EMPTY_FORM);
-    setImageInput("");
-    setErrors({});
-    setSuccess(false);
+    setField("image", (form.image || []).filter((_, i) => i !== index));
   };
 
   const submit = async () => {
-    const request: ProductAdminRequest = { ...form, category };
-    const validationErrors = validateProduct(request);
+    const validationErrors = validateProduct(form as any);
 
     if (!isProductValid(validationErrors)) {
       setErrors(validationErrors);
@@ -88,14 +74,13 @@ export function useAddProduct() {
 
     try {
       setSaving(true);
-      const id = await productsCollection.createProduct(db, request);
-      // Añadir el nuevo producto al estado local inmediatamente (sin refetch)
-      addProductToState(category, { ...request, id });
+      await productsCollection.updateProduct(db, form.id, form);
       setSuccess(true);
-      reset();
       setTimeout(() => setSuccess(false), 3000);
+      return true;
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error("Error updating product:", error);
+      return false;
     } finally {
       setSaving(false);
     }
@@ -109,12 +94,10 @@ export function useAddProduct() {
     saving,
     uploading,
     success,
-    category,
     setField,
     addImage,
     handleFileUpload,
     removeImage,
     submit,
-    reset,
   };
 }

@@ -23,7 +23,7 @@ export default function ProductCard({ product }: { product: Product | PublicProd
           {!product.selled && <span className="text-success flex items-center gap-1">AVAILABLE</span>}
         </div>
 
-        <div className="aspect-square relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 p-4">
+        <div className="aspect-square relative overflow-hidden transition-all duration-700 p-4">
           <img
             alt={product.name}
             src={product.image[0]}

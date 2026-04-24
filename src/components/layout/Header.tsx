@@ -24,6 +24,7 @@ export default function Header() {
               <Link
                 key={cat}
                 href={`/${cat}`}
+                suppressHydrationWarning
                 className={`font-black uppercase text-sm tracking-widest transition-colors relative pb-1 ${
                   pathname === `/${cat}` 
                     ? "text-primary-fixed after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-1 after:bg-primary-fixed" 

@@ -4,6 +4,7 @@
 export interface PublicProduct {
     id: string;
     name: string;
+    description?: string;
     price: number;
     image: string[];
     category: string;
@@ -16,7 +17,6 @@ export interface PublicProduct {
 export interface PrivateProduct {
     purchasePrice: number;
     margin: number;
-    description: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -31,7 +31,7 @@ export interface Product extends PublicProduct, PrivateProduct {}
  */
 export interface ProductAdminRequest {
     name: string;
-    description: string;
+    description?: string;
     price: number;
     purchasePrice: number;
     margin: number;

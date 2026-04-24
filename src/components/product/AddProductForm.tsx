@@ -16,12 +16,32 @@ interface AddProductFormProps {
 
 export function AddProductForm({ onSuccess }: AddProductFormProps) {
   const [open, setOpen] = useState(false);
-  const { form, imageInput, setImageInput, errors, saving, success, category, setField, addImage, removeImage, submit } =
-    useAddProduct();
+  const {
+    form,
+    imageInput,
+    setImageInput,
+    errors,
+    saving,
+    uploading,
+    success,
+    category,
+    setField,
+    addImage,
+    handleFileUpload,
+    removeImage,
+    submit,
+  } = useAddProduct();
 
   const handleSubmit = async () => {
     await submit();
     if (onSuccess) onSuccess();
+  };
+
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await handleFileUpload(file);
+    }
   };
 
   return (
@@ -126,11 +146,11 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
 
           {/* Description */}
           <div className="md:col-span-2">
-            <label className={labelClass}>Descripción</label>
+            <label className={labelClass}>Descripción (Opcional)</label>
             <textarea
               className={`${inputClass} resize-none h-24 normal-case tracking-normal`}
               placeholder="Descripción detallada del producto..."
-              value={form.description}
+              value={form.description || ""}
               onChange={e => setField("description", e.target.value)}
             />
             {errors.description && <p className={errorClass}>{errors.description}</p>}
@@ -138,39 +158,66 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
 
           {/* Images */}
           <div className="md:col-span-2">
-            <label className={labelClass}>URLs de imágenes</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                className={`${inputClass} flex-1`}
-                placeholder="https://..."
-                value={imageInput}
-                onChange={e => setImageInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && addImage()}
-              />
-              <button
-                type="button"
-                onClick={addImage}
-                className="px-4 py-2 bg-on-surface text-surface font-black text-xs uppercase tracking-widest hover:bg-primary-fixed transition-colors"
-              >
-                Add
-              </button>
+            <label className={labelClass}>Imágenes del producto</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* URL Input */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className={`${inputClass} flex-1`}
+                  placeholder="Pegar URL de imagen..."
+                  value={imageInput}
+                  onChange={e => setImageInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addImage(imageInput)}
+                />
+                <button
+                  type="button"
+                  onClick={() => addImage(imageInput)}
+                  className="px-4 py-2 bg-on-surface text-surface font-black text-xs uppercase tracking-widest hover:bg-primary-fixed transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* File Input */}
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  disabled={uploading}
+                />
+                <div className={`flex items-center justify-center gap-3 px-4 py-2 border-2 border-dashed border-on-surface/20 text-[10px] font-black uppercase tracking-widest transition-colors ${uploading ? 'bg-on-surface/5' : 'hover:bg-on-surface/5'}`}>
+                  {uploading ? (
+                    <>
+                      <span className="material-symbols-outlined text-base animate-spin">sync</span>
+                      SUBIENDO...
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-base">cloud_upload</span>
+                      Subir archivo
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
             {errors.image && <p className={errorClass}>{errors.image}</p>}
             {form.image.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 flex flex-wrap gap-4">
                 {form.image.map((url, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-2 bg-on-surface/5 border border-on-surface/10 px-3 py-1 text-[10px] font-mono max-w-[240px]"
+                    className="relative w-24 h-24 border border-on-surface/10 bg-on-surface/5 group"
                   >
-                    <span className="truncate opacity-60">{url}</span>
+                    <img src={url} alt={`Preview ${i}`} className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => removeImage(i)}
-                      className="text-error hover:scale-110 transition-transform flex-shrink-0"
+                      className="absolute top-1 right-1 bg-error text-on-error rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity brutal-shadow hover:scale-110"
                     >
-                      <span className="material-symbols-outlined text-sm">close</span>
+                      <span className="material-symbols-outlined text-[10px] block">close</span>
                     </button>
                   </div>
                 ))}

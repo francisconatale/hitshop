@@ -43,11 +43,6 @@ export const validateProduct = (data: ProductAdminRequest): ProductValidationErr
         errors.category = "la categoría es obligatoria";
     }
 
-    // Validación de Descripción
-    if (!data.description || data.description.trim().length < 10) {
-        errors.description = "la descripción debe ser más detallada (mínimo 10 caracteres)";
-    }
-
     return errors;
 };
 

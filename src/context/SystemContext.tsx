@@ -52,46 +52,51 @@ export function SystemProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const saveState = (newData: any) => {
-    setProductsData(newData);
-    setCategories(Object.keys(newData));
+  const saveStateToStorage = (newData: any) => {
     localStorage.setItem('hitshop_categories', JSON.stringify(newData));
   };
 
   const addCategory = React.useCallback((name: string) => {
     const lowerName = name.toLowerCase();
-    if (productsData[lowerName as keyof typeof productsData]) return;
-    
-    const newData = {
-      ...productsData,
-      [lowerName]: []
-    };
-    saveState(newData);
-  }, [productsData]);
+    setProductsData(prev => {
+      if ((prev as any)[lowerName]) return prev;
+      const newData = { ...prev, [lowerName]: [] };
+      setCategories(Object.keys(newData));
+      saveStateToStorage(newData);
+      return newData;
+    });
+  }, []);
 
   const removeCategory = React.useCallback((name: string) => {
     const lowerName = name.toLowerCase();
-    const { [lowerName as any]: removed, ...rest } = productsData as any;
-    saveState(rest);
-  }, [productsData]);
+    setProductsData(prev => {
+      const { [lowerName as any]: removed, ...rest } = prev as any;
+      setCategories(Object.keys(rest));
+      saveStateToStorage(rest);
+      return rest;
+    });
+  }, []);
 
   const addProductToState = React.useCallback((category: string, product: any) => {
     const lowerCat = category.toLowerCase();
-    const current = (productsData as any)[lowerCat] ?? [];
-    const newData = { ...productsData, [lowerCat]: [...current, product] };
-    saveState(newData);
-  }, [productsData]);
+    setProductsData(prev => {
+      const current = (prev as any)[lowerCat] ?? [];
+      const newData = { ...prev, [lowerCat]: [...current, product] };
+      saveStateToStorage(newData);
+      return newData;
+    });
+  }, []);
 
   const setCategoryProducts = React.useCallback((category: string, products: any[]) => {
     const lowerCat = category.toLowerCase();
-    
-    // Evitar actualización si los datos son idénticos (simple check de longitud)
-    const currentProducts = (productsData as any)[lowerCat] || [];
-    if (currentProducts.length === products.length) return;
-
-    const newData = { ...productsData, [lowerCat]: products };
-    saveState(newData);
-  }, [productsData]);
+    setProductsData(prev => {
+      const currentProducts = (prev as any)[lowerCat] || [];
+      if (currentProducts.length === products.length) return prev;
+      const newData = { ...prev, [lowerCat]: products };
+      saveStateToStorage(newData);
+      return newData;
+    });
+  }, []);
 
   const logout = async () => {
     await authService.logout();

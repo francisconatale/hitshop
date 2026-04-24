@@ -62,6 +62,7 @@ export class ProductsCollection {
         const publicData: PublicProduct = {
             id,
             name: request.name,
+            description: request.description,
             price: request.price,
             image: request.image,
             category: request.category,
@@ -71,7 +72,6 @@ export class ProductsCollection {
         const privateData: PrivateProduct = {
             purchasePrice: request.purchasePrice,
             margin: request.margin,
-            description: request.description,
             createdAt: new Date(),
             updatedAt: new Date(),
         };
@@ -90,6 +90,7 @@ export class ProductsCollection {
     async updateProduct(db: Firestore, id: string, request: UpdateProductRequest): Promise<string> {
         const publicUpdates: any = {};
         if (request.name !== undefined) publicUpdates.name = request.name;
+        if (request.description !== undefined) publicUpdates.description = request.description;
         if (request.price !== undefined) publicUpdates.price = request.price;
         if (request.image !== undefined) publicUpdates.image = request.image;
         if (request.category !== undefined) publicUpdates.category = request.category;
@@ -98,7 +99,6 @@ export class ProductsCollection {
         const privateUpdates: any = { updatedAt: new Date() };
         if (request.purchasePrice !== undefined) privateUpdates.purchasePrice = request.purchasePrice;
         if (request.margin !== undefined) privateUpdates.margin = request.margin;
-        if (request.description !== undefined) privateUpdates.description = request.description;
 
         const promises = [];
         if (Object.keys(publicUpdates).length > 0) {

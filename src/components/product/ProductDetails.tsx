@@ -16,14 +16,14 @@ export default function ProductDetails({ product }: { product: Product | PublicP
   const originalPrice = Math.round(product.price * 1.25);
   const rating = 4.9;
   
-  const description = "description" in product ? product.description : "High-performance silicon unit optimized for extreme throughput and thermal efficiency.";
+  const description = product.description || "High-performance silicon unit optimized for extreme throughput and thermal efficiency.";
   const truncatedDesc = description.length > 200 ? description.slice(0, 200) + "..." : description;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 bg-surface">
-      {/* Image Section - 7 Columns */}
-      <div className="lg:col-span-7 relative flex flex-col border-b lg:border-b-0 lg:border-r border-on-surface/5 bg-on-surface/[0.01]">
-        <div className="flex-grow relative aspect-square lg:aspect-auto overflow-hidden flex items-center justify-center p-8 lg:p-12 min-h-[500px]">
+      {/* Image Section - 5 Columns on desktop, full width on mobile/tablet */}
+      <div className="lg:col-span-5 relative flex flex-col border-b lg:border-b-0 lg:border-r border-on-surface/5 bg-on-surface/[0.01]">
+        <div className="relative aspect-square sm:aspect-[4/3] md:aspect-video lg:aspect-square w-full overflow-hidden flex items-center justify-center p-6 sm:p-8 lg:p-12">
           <AnimatePresence mode="wait">
             <motion.img
               key={activeImage}
@@ -51,7 +51,7 @@ export default function ProductDetails({ product }: { product: Product | PublicP
               <button
                 key={i}
                 onClick={() => setActiveImage(i)}
-                className={`w-16 h-16 flex-shrink-0 border transition-all duration-300 ${
+                className={`w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 border transition-all duration-300 ${
                   activeImage === i ? "border-on-surface scale-105" : "border-on-surface/10 grayscale opacity-40 hover:opacity-100"
                 }`}
               >
@@ -62,8 +62,8 @@ export default function ProductDetails({ product }: { product: Product | PublicP
         )}
       </div>
 
-      {/* Info Section - 5 Columns */}
-      <div className="lg:col-span-5 p-8 lg:p-10 flex flex-col">
+      {/* Info Section - 7 Columns on desktop, full width on mobile/tablet */}
+      <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col">
         <div className="flex-grow">
           <div className="flex flex-col gap-1 mb-6">
             <span className="text-[10px] font-mono opacity-20 uppercase tracking-[0.2em]">Hardware_Asset</span>
@@ -101,10 +101,10 @@ export default function ProductDetails({ product }: { product: Product | PublicP
           <div className="flex flex-col mb-10">
             <span className="text-[10px] font-mono opacity-20 uppercase tracking-widest mb-1">Valuation</span>
             <div className="flex items-baseline gap-3">
-              <span className="text-5xl font-black tabular-nums tracking-tighter text-on-surface">
+              <span className="text-4xl sm:text-5xl font-black tabular-nums tracking-tighter text-on-surface">
                 ${product.price}
               </span>
-              <span className="text-xl font-mono opacity-10 line-through tracking-tighter">
+              <span className="text-lg sm:text-xl font-mono opacity-10 line-through tracking-tighter">
                 ${originalPrice}
               </span>
             </div>

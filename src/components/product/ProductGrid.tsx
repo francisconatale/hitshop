@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useCallback, ReactNode, useEffect } from 'react';
+import { useState, useCallback, ReactNode, useEffect, useMemo } from 'react';
 import ScrambleText from '@/components/ui/ScrambleText';
 import { Text } from '@/components/ui/Text';
 import { useAuth } from '@/context/AuthContext';
@@ -26,14 +26,15 @@ export function CategoryHeader({ category, count }: { category: string, count?: 
   const finalCount = count !== undefined ? count : contextCount;
   const isSyncing = finalCount === undefined;
 
-  const CATEGORY_ICONS: Record<string, string> = {
-    gpus: 'memory',
-    cpus: 'developer_board',
-    systems: 'desktop_windows',
-    peripherals: 'keyboard',
-  };
-
-  const categoryIcon = CATEGORY_ICONS[category.toLowerCase()] ?? 'inventory_2';
+  const categoryIcon = useMemo(() => {
+    const CATEGORY_ICONS: Record<string, string> = {
+      gpus: 'memory',
+      cpus: 'developer_board',
+      systems: 'desktop_windows',
+      peripherals: 'keyboard',
+    };
+    return CATEGORY_ICONS[category.toLowerCase()] ?? 'inventory_2';
+  }, [category]);
 
   return (
     <div className="max-w-[1440px] mx-auto mt-6 px-4">
@@ -77,14 +78,13 @@ export function CategoryHeader({ category, count }: { category: string, count?: 
  */
 export function SyncSystemState({ category, products }: { category: string, products: any[] }) {
   const { setCategoryProducts } = useSystem();
+  const count = products.length;
   
   useEffect(() => {
-    // Solo actualizamos si hay productos válidos
     if (category && products) {
       setCategoryProducts(category, products);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, products.length]); // Solo reacciona si cambia la categoría o la cantidad
+  }, [category, count, setCategoryProducts]);
 
   return null;
 }
