@@ -104,7 +104,10 @@ export default function ProductGrid({ category, initialProducts = [], children }
             {children || (
               initialProducts.length > 0 ? (
                 <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {initialProducts.map((item: any) => (
+                  {[...initialProducts].sort((a: any, b: any) => {
+                    if (a.selled === b.selled) return 0;
+                    return a.selled ? 1 : -1;
+                  }).map((item: any) => (
                     <ProductCard key={item.id} product={item} />
                   ))}
                 </section>

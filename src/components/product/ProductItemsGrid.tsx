@@ -16,7 +16,10 @@ export default function ProductItemsGrid({ products }: ProductItemsGridProps) {
 
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 border-l border-t border-on-surface">
-      {products.map((item) => (
+      {[...products].sort((a, b) => {
+        if (a.selled === b.selled) return 0;
+        return a.selled ? 1 : -1;
+      }).map((item) => (
         <ProductCard key={item.id} product={item} />
       ))}
     </section>

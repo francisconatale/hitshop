@@ -4,7 +4,7 @@ import { ProductGridSkeleton } from "@/components/product/ProductSkeleton";
 import { CategoryHeader } from "@/components/product/ProductGrid";
 import { notFound } from "next/navigation";
 
-const VALID_CATEGORIES = ['gpus', 'cpus', 'systems', 'peripherals'];
+const VALID_CATEGORIES = ['gpus'];
 
 export default async function DynamicCategoryPage({
   params,

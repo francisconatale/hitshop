@@ -5,10 +5,7 @@ import { User } from "firebase/auth";
 import { authService } from '@/lib/auth/auth';
 
 const DEFAULT_CATEGORIES = {
-  cpus: [],
-  gpus: [],
-  apparel: [],
-  peripherals: []
+  gpus: []
 };
 
 interface SystemContextType {
