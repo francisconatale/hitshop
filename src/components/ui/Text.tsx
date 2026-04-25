@@ -51,22 +51,24 @@ export function Text({ path, className, children, ...props }: TextProps) {
         suppressContentEditableWarning
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={`outline-none ring-2 ring-blue-500 rounded px-1 transition-all ${className || ""}`}
+        className={`outline-none ring-2 ring-blue-500 rounded px-1 transition-all cursor-text selection:bg-blue-100 ${className || ""}`}
         title={`Editando: ${path}`}
         {...props}
       >
-        {value}
+        {typeof children === 'function' ? children(value) : value}
       </span>
     );
   }
 
-  if (typeof children === 'function') {
-    return <>{children(value)}</>;
-  }
+  const content = typeof children === 'function' ? children(value) : value;
 
   return (
-    <span className={className} suppressHydrationWarning {...props}>
-      {value}
+    <span 
+      className={`cursor-default select-none ${className || ""}`} 
+      suppressHydrationWarning 
+      {...props}
+    >
+      {content}
     </span>
   );
 }

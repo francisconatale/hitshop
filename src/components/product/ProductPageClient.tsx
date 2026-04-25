@@ -114,7 +114,7 @@ export default function ProductPageClient({ product, category }: ProductPageClie
         </motion.div>
 
         {/* Minimal Footer Metadata */}
-        <div className="mt-6 flex justify-between items-center font-mono text-[7px] opacity-10 uppercase tracking-[0.3em]">
+        <div className="mt-6 flex justify-between items-center font-mono text-[7px] opacity-40 uppercase tracking-[0.3em]">
           <span>Trace: node_0x{product.id.toString().substring(0,6)}...</span>
           <span>Asset: {product.name} // V1.0</span>
         </div>

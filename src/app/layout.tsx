@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Geist } from "next/font/google";
 
 import "./globals.css";
 
@@ -9,6 +9,11 @@ import DevConsole from "@/components/layout/DevConsole";
 import { AuthProvider } from "@/context/AuthContext";
 import { SystemProvider } from "@/context/SystemContext";
 import { LocalesProvider } from "@/context/LocalesContext";
+import { CartProvider } from "@/context/CartContext";
+import { CartDrawer } from "@/components/cart/CartDrawer";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" className={cn("light", "font-sans", geist.variable)}>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
@@ -41,15 +46,18 @@ export default function RootLayout({
         <AuthProvider>
           <LocalesProvider>
             <SystemProvider>
-              <div className="min-h-screen bg-surface text-on-surface flex flex-col relative">
-                <div className="bg-noise" />
-                <Header />
-                <main className="flex-grow">
-                  {children}
-                </main>
-                <Footer />
-              </div>
-              <DevConsole />
+              <CartProvider>
+                <div className="min-h-screen bg-surface text-on-surface flex flex-col relative">
+                  <div className="bg-noise" />
+                  <Header />
+                  <main className="flex-grow">
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+                <CartDrawer />
+                <DevConsole />
+              </CartProvider>
             </SystemProvider>
           </LocalesProvider>
         </AuthProvider>

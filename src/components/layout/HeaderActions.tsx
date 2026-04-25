@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { CartIcon } from "../cart/CartIcon";
 
 export default function HeaderActions() {
   const { user, userData, logout } = useAuth();
@@ -9,6 +10,7 @@ export default function HeaderActions() {
   return (
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-2">
+        <CartIcon />
         <span className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2">
           search
         </span>

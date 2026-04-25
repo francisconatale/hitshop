@@ -10,7 +10,7 @@ export class ProductsCollection {
     async getProductsByCategory(db: Firestore, category: string, isAdmin: boolean): Promise<PublicProduct[] | Product[]> {
         const q = query(collection(db, "products"), where("category", "==", category));
         const snap = await getDocs(q);
-        const publicProducts = snap.docs.map(d => ({ id: d.id, ...d.data() } as PublicProduct));
+        const publicProducts = snap.docs.map(d => ({ ...d.data(), id: d.id } as PublicProduct));
 
         if (!isAdmin) {
             return publicProducts;
@@ -32,7 +32,7 @@ export class ProductsCollection {
      */
     async getProducts(db: Firestore, isAdmin: boolean): Promise<PublicProduct[] | Product[]> {
         const snap = await getDocs(collection(db, "products"));
-        const publicProducts = snap.docs.map(d => ({ id: d.id, ...d.data() } as PublicProduct));
+        const publicProducts = snap.docs.map(d => ({ ...d.data(), id: d.id } as PublicProduct));
 
         if (!isAdmin) {
             return publicProducts;
@@ -119,7 +119,7 @@ export class ProductsCollection {
         const publicSnap = await getDoc(doc(db, "products", id));
         if (!publicSnap.exists()) return null;
 
-        const publicData = { id: publicSnap.id, ...publicSnap.data() } as PublicProduct;
+        const publicData = { ...publicSnap.data(), id: publicSnap.id } as PublicProduct;
 
         if (!isAdmin) {
             return publicData;

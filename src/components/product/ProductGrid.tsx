@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useSystem } from '@/context/SystemContext';
 import { AddProductForm } from '@/components/product/AddProductForm';
 import ProductCard from '@/components/product/ProductCard';
+import ProductItemsGrid from '@/components/product/ProductItemsGrid';
 import { Product, PublicProduct } from '@/types/product';
 
 interface ProductGridProps {
@@ -102,20 +103,7 @@ export default function ProductGrid({ category, initialProducts = [], children }
         <div className="max-w-[1440px] mx-auto mb-6 px-4">
           <div className="border-l border-t border-on-surface min-h-[400px] relative">
             {children || (
-              initialProducts.length > 0 ? (
-                <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {[...initialProducts].sort((a: any, b: any) => {
-                    if (a.selled === b.selled) return 0;
-                    return a.selled ? 1 : -1;
-                  }).map((item: any) => (
-                    <ProductCard key={item.id} product={item} />
-                  ))}
-                </section>
-              ) : (
-                <div className="py-24 border-r border-b border-on-surface flex flex-col items-center justify-center bg-surface">
-                  <p className="text-[10px] font-black uppercase opacity-20 font-mono tracking-[0.5em]">ERROR: Empty_Node_Buffer</p>
-                </div>
-              )
+              <ProductItemsGrid products={initialProducts} />
             )}
           </div>
         </div>
@@ -171,6 +159,25 @@ export default function ProductGrid({ category, initialProducts = [], children }
           </AnimatePresence>
         </div>
       </div>
+
+      <AnimatePresence>
+        {isHeroComplete && initialProducts && initialProducts.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="mb-24"
+          >
+            <div className="flex justify-between items-end mb-6">
+              <div>
+                <span className="text-[10px] font-mono font-black text-primary-fixed uppercase tracking-[0.3em]">Featured_Nodes</span>
+                <h2 className="text-4xl font-black uppercase tracking-tighter">Latest Drops</h2>
+              </div>
+            </div>
+            <ProductItemsGrid products={initialProducts} layout="carousel" />
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <motion.div 
         initial={{ opacity: 0 }}

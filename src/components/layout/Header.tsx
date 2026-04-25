@@ -20,20 +20,23 @@ export default function Header() {
             </h1>
           </Link>
           <nav className="hidden lg:flex gap-10">
-            {categories.map((cat) => (
-              <Link
-                key={cat}
-                href={`/${cat}`}
-                suppressHydrationWarning
-                className={`font-black uppercase text-sm tracking-widest transition-colors relative pb-1 ${
-                  pathname === `/${cat}` 
-                    ? "text-primary-fixed after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-1 after:bg-primary-fixed" 
-                    : "text-on-surface-variant hover:text-on-surface"
-                }`}
-              >
-                {cat}
-              </Link>
-            ))}
+            {categories.map((cat) => {
+              const isActive = pathname === `/${cat}` || pathname.includes(`/${cat}/`) || (cat === 'products' && pathname.includes('/products/'));
+              return (
+                <Link
+                  key={cat}
+                  href={`/${cat}`}
+                  suppressHydrationWarning
+                  className={`font-black uppercase text-sm tracking-widest transition-colors relative pb-1 ${
+                    isActive 
+                      ? "text-primary-fixed after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-1 after:bg-primary-fixed" 
+                      : "text-on-surface-variant hover:text-on-surface"
+                  }`}
+                >
+                  {cat}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         <ClientOnly>

@@ -3,12 +3,15 @@
 import { Text } from '@/components/ui/Text';
 import { Product, PublicProduct } from '@/types/product';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Star, Flame, Trophy } from '@phosphor-icons/react';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductCard({ product }: { product: Product | PublicProduct }) {
+  const { addToCart } = useCart();
   const suffix = product.id.toString().slice(-3).toUpperCase().padStart(3, "0");
   const systemId = `IDX.${product.name.substring(0, 3).toUpperCase()}.${suffix}`;
-  
+
   // Simulated marketing data
   const originalPrice = Math.round(product.price * 1.25);
   const rating = 4.5;
@@ -24,15 +27,17 @@ export default function ProductCard({ product }: { product: Product | PublicProd
         </div>
 
         <div className="aspect-square relative overflow-hidden transition-all duration-700 p-4">
-          <img
+          <Image
             alt={product.name}
             src={product.image[0]}
-            className="w-full h-full object-contain scale-100 group-hover:scale-105 transition-transform duration-700"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-contain mix-blend-multiply scale-100 group-hover:scale-105 transition-transform duration-700 p-4"
           />
-          
+
           {/* Subtle Badges */}
           {!product.selled && (
-            <div className="absolute top-4 left-4 flex flex-col gap-1 z-20">
+            <div className="absolute top-4 left-4 flex flex-col gap-1 z-30 pointer-events-none">
               {isPopular && (
                 <div className="flex items-center gap-1 bg-on-surface text-surface px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest border border-on-surface/10">
                   <Trophy size={8} weight="fill" />
@@ -49,7 +54,7 @@ export default function ProductCard({ product }: { product: Product | PublicProd
           )}
 
           {product.selled && (
-            <div className="absolute inset-0 bg-surface/80 backdrop-blur-[2px] flex items-center justify-center z-10">
+            <div className="absolute inset-0 bg-surface/80 backdrop-blur-[2px] flex items-center justify-center z-40 pointer-events-none">
               <span className="text-[10px] font-black uppercase tracking-[0.4em] border-y border-on-surface/20 py-1 px-4 opacity-40">
                 OUT_OF_STOCK
               </span>
@@ -63,7 +68,7 @@ export default function ProductCard({ product }: { product: Product | PublicProd
               {product.name}
             </h3>
           </div>
-          
+
           <div className="flex items-center gap-1 opacity-20 group-hover:opacity-40 transition-opacity">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
@@ -85,7 +90,10 @@ export default function ProductCard({ product }: { product: Product | PublicProd
         </div>
 
         {!product.selled && (
-          <button className="bg-surface text-on-surface border border-on-surface/20 px-3 py-1 font-black uppercase text-[9px] tracking-widest transition-all hover:bg-on-surface hover:text-surface active:scale-95">
+          <button 
+            onClick={() => addToCart(product as PublicProduct)}
+            className="bg-surface text-on-surface border border-on-surface/20 px-3 py-1 font-black uppercase text-[9px] tracking-widest transition-all hover:bg-on-surface hover:text-surface active:scale-95"
+          >
             <Text path="productTexts.addButton" />
           </button>
         )}
