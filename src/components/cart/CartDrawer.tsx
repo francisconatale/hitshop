@@ -46,7 +46,7 @@ export function CartDrawer() {
             <div className="p-6 border-b-2 border-on-surface flex items-center justify-between bg-surface relative z-10">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-2xl">shopping_bag</span>
-                <h2 className="text-xl font-black uppercase tracking-tighter leading-tight">System_Cart</h2>
+                <h2 className="text-xl font-black uppercase tracking-tighter leading-tight">System Cart</h2>
                 <span className="bg-on-surface text-surface text-[10px] font-mono px-2 py-0.5 tracking-widest">
                   [{items.length}]
                 </span>
@@ -65,7 +65,7 @@ export function CartDrawer() {
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
                   <span className="material-symbols-outlined text-6xl">inventory_2</span>
                   <div className="space-y-1">
-                    <p className="font-mono text-xs uppercase tracking-widest">NO_ASSETS_FOUND</p>
+                    <p className="font-mono text-xs uppercase tracking-widest">NO ASSETS FOUND</p>
                     <p className="font-mono text-[9px] tracking-widest">Awaiting input sequence...</p>
                   </div>
                   <button 
@@ -77,7 +77,7 @@ export function CartDrawer() {
                 </div>
               ) : (
                 <section className="space-y-4">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 border-b border-on-surface/10 pb-2">Selected_Assets</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 border-b border-on-surface/10 pb-2">Selected Assets</h3>
                   {items.map((item) => (
                     <div key={item.id} className="group relative">
                       <Link 
@@ -129,7 +129,7 @@ export function CartDrawer() {
             {items.length > 0 && (
               <div className="p-6 border-t-2 border-on-surface bg-surface space-y-4 relative z-10">
                 <div className="flex flex-col mb-4">
-                  <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest mb-1">Total_Valuation</span>
+                  <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest mb-1">Total Valuation</span>
                   <span className="text-3xl font-black tabular-nums tracking-tighter text-on-surface">
                     ${total.toLocaleString()}
                   </span>
@@ -140,7 +140,7 @@ export function CartDrawer() {
                   className="w-full bg-primary-fixed text-on-surface border-2 border-on-surface px-3 py-4 font-black uppercase text-xs tracking-[0.2em] transition-all brutal-shadow-primary hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:scale-[0.98] flex items-center justify-center gap-4"
                 >
                   <span className="material-symbols-outlined text-xl">terminal</span>
-                  Execute_Final_Node
+                  Execute Final Node
                 </button>
                 
                 <div className="pt-2 flex justify-center">

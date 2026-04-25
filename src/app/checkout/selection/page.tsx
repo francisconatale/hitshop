@@ -15,9 +15,9 @@ export default function SelectionPage() {
     return (
       <PageLayout>
         <div className="max-w-[1440px] mx-auto py-20 px-6 text-center space-y-8">
-          <p className="font-mono text-xs uppercase tracking-[0.5em] opacity-40">SISTEMA_VACÍO // NO_HAY_ACTIVOS_SELECCIONADOS</p>
+          <p className="font-mono text-xs uppercase tracking-[0.5em] opacity-40">SISTEMA VACÍO // NO HAY ACTIVOS SELECCIONADOS</p>
           <Link href="/" className="inline-block border-2 border-on-surface px-8 py-3 font-black uppercase text-xs tracking-widest hover:bg-on-surface hover:text-surface transition-all brutal-shadow">
-            VOLVER_AL_INICIO
+            VOLVER AL INICIO
           </Link>
         </div>
       </PageLayout>
@@ -52,7 +52,7 @@ export default function SelectionPage() {
           <div className="lg:col-span-8 bg-on-surface text-surface dark:bg-surface-container dark:text-on-surface p-6 md:p-8 space-y-8 order-2 lg:order-1 border-b-2 lg:border-b-0 lg:border-r-2 border-on-surface overflow-y-auto">
             <header className="flex items-baseline justify-between border-b border-surface/10 dark:border-on-surface/10 pb-4">
               <h2 className="text-2xl font-black uppercase tracking-tighter italic flex items-baseline gap-4">
-                Activos_Seleccionados
+                Activos Seleccionados
                 <span className="text-xs font-mono not-italic text-primary-fixed tracking-[0.3em]">0x{items.length}</span>
               </h2>
             </header>
@@ -78,7 +78,7 @@ export default function SelectionPage() {
                           <span className="material-symbols-outlined text-sm">delete_forever</span>
                         </button>
                       </div>
-                      <p className="text-[8px] font-mono text-primary-fixed/60 uppercase tracking-[0.3em]">{item.category} // SERIAL_{item.id.substring(0,8)}</p>
+                      <p className="text-[8px] font-mono text-primary-fixed/60 uppercase tracking-[0.3em]">{item.category} // SERIAL {item.id.substring(0,8)}</p>
                     </div>
                     <p className="text-xl font-black tabular-nums tracking-tighter">${item.price.toLocaleString()}</p>
                   </div>
@@ -115,7 +115,7 @@ export default function SelectionPage() {
                 onClick={() => router.push('/checkout/validation')}
                 className="w-full bg-on-surface text-surface border-2 border-on-surface py-4 font-black uppercase text-xs tracking-[0.4em] transition-all brutal-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none flex items-center justify-center gap-4"
               >
-                CONTINUAR_A_VALIDACIÓN
+                CONTINUAR A VALIDACIÓN
               </button>
             </div>
           </div>

@@ -157,15 +157,18 @@ export default function ProductGrid({ category, initialProducts = [], children }
         </div>
       </section>
 
-      {/* SECCIÓN 2: DROPS - TOTALMENTE ESTÁTICA */}
+      {/* SECCIÓN 2: HOW TO BUY */}
+      <HowToBuy />
+
+      {/* SECCIÓN 3: DROPS - TOTALMENTE ESTÁTICA */}
       <section className="bg-surface border-t-2 border-on-surface">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-16 md:py-24">
           {isHeroComplete && initialProducts && initialProducts.length > 0 && (
             <div className="mb-24">
               <div className="flex justify-between items-end mb-12">
                 <div>
-                  <span className="text-[10px] font-mono font-black text-primary-fixed uppercase tracking-[0.3em]">Featured_Nodes</span>
-                  <h2 className="text-4xl sm:text-6xl font-black font-heading uppercase tracking-tighter">Latest Drops</h2>
+                  <span className="text-[10px] font-mono font-black text-primary-fixed uppercase tracking-[0.3em]">Novedades_Destacadas</span>
+                  <h2 className="text-4xl sm:text-6xl font-black font-heading uppercase tracking-tighter">Últimos Ingresos</h2>
                 </div>
               </div>
               <ProductItemsGrid products={initialProducts} layout="carousel" />
@@ -173,17 +176,6 @@ export default function ProductGrid({ category, initialProducts = [], children }
           )}
         </div>
 
-        <HowToBuy />
-
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-16 md:py-24">
-          <div className="grid grid-cols-2 md:grid-cols-4 border-l-2 border-t-2 border-on-surface">
-            {['Status: Online', 'Uptime: 99.9%', 'Node: DC-04', 'Auth: Root'].map((text) => (
-              <div key={text} className="border-r-2 border-b-2 border-on-surface p-4 sm:p-6 font-mono text-[8px] sm:text-[10px] font-black uppercase text-on-surface-variant opacity-50 hover:opacity-100 transition-opacity">
-                {text}
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
     </div>
   );

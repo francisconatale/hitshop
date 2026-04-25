@@ -40,8 +40,8 @@ export default function ValidationPage() {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (form.name.length < 3) newErrors.name = "MIN_3_CARACTERES_REQUERIDOS";
-    if (!/^\d{10,}$/.test(form.phone.replace(/\D/g, ''))) newErrors.phone = "FORMATO_TELÉFONO_INVÁLIDO";
+    if (form.name.length < 3) newErrors.name = "MIN 3 CARACTERES REQUERIDOS";
+    if (!/^\d{10,}$/.test(form.phone.replace(/\D/g, ''))) newErrors.phone = "FORMATO TELÉFONO INVÁLIDO";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -77,7 +77,7 @@ export default function ValidationPage() {
               <span className="w-1.5 h-1.5 bg-primary-fixed"></span>
               <span className="font-black text-on-surface">
                 <span className="hidden sm:inline"><Text path="cartTexts.steps.validation" /></span>
-                <span className="sm:hidden">02_VALIDACIÓN</span>
+                <span className="sm:hidden">02 VALIDACIÓN</span>
               </span>
             </div>
             <span className="opacity-10">/</span>
@@ -95,7 +95,7 @@ export default function ValidationPage() {
           <div className="lg:col-span-5 xl:col-span-4 bg-on-surface text-surface p-6 md:p-8 flex flex-col justify-between order-1 lg:order-2 border-b-2 lg:border-b-0 border-on-surface">
             <div className="space-y-6 md:space-y-8">
               <header className="border-b border-surface/10 pb-4">
-                <h3 className="text-lg font-black uppercase tracking-tight italic">Resumen_De_Adquisición</h3>
+                <h3 className="text-lg font-black uppercase tracking-tight italic">Resumen De Adquisición</h3>
               </header>
 
               <div className="space-y-3 max-h-40 lg:max-h-none overflow-y-auto pr-2 custom-scrollbar">
@@ -112,7 +112,7 @@ export default function ValidationPage() {
 
               <div className="pt-4 border-t border-surface/10 space-y-2">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest">Valuación_Total</span>
+                  <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest">Valuación Total</span>
                   <span className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter text-primary-fixed">${total.toLocaleString()}</span>
                 </div>
               </div>
@@ -134,10 +134,10 @@ export default function ValidationPage() {
             <header className="space-y-1">
               <h2 className="text-xs font-black uppercase tracking-[0.3em] flex items-center gap-3">
                 <span className="w-2 h-2 bg-on-surface"></span>
-                {userName ? `Identidad_Verificada: ${userName}` : 'Validación_De_Identidad'}
+                {userName ? `Identidad Verificada: ${userName}` : 'Validación De Identidad'}
               </h2>
               <p className="text-[8px] font-mono opacity-40 uppercase tracking-widest">
-                {userName ? 'PARÁMETROS_BLOQUEADOS' : 'Esperando parámetros de autenticación'}
+                {userName ? 'PARÁMETROS BLOQUEADOS' : 'Esperando parámetros de autenticación'}
               </p>
             </header>
 
@@ -145,13 +145,13 @@ export default function ValidationPage() {
               <div className="space-y-6">
                 <div className="space-y-1.5">
                   <label className="text-[8px] font-mono font-black uppercase tracking-[0.4em] opacity-40">
-                    {userName ? 'Etiqueta_Identidad (Autorizado)' : 'Etiqueta_Identidad (Nombre Completo)'}
+                    {userName ? 'Etiqueta Identidad (Autorizado)' : 'Etiqueta Identidad (Nombre Completo)'}
                   </label>
                   <input 
                     type="text" 
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="INGRESAR_NOMBRE"
+                    placeholder="INGRESAR NOMBRE"
                     readOnly={!!userName}
                     className={`${inputStyles} ${errors.name ? 'border-error' : ''} ${userName ? 'opacity-50 cursor-not-allowed' : ''} py-3 sm:py-4`}
                   />
@@ -160,7 +160,7 @@ export default function ValidationPage() {
 
                 <div className="space-y-1.5">
                   <label className="text-[8px] font-mono font-black uppercase tracking-[0.4em] opacity-40">
-                    {userPhone ? 'Comm_Link (Autorizado)' : 'Comm_Link (Teléfono +54)'}
+                    {userPhone ? 'Comm Link (Autorizado)' : 'Comm Link (Teléfono +54)'}
                   </label>
                   <input 
                     type="tel" 
@@ -174,12 +174,12 @@ export default function ValidationPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[8px] font-mono font-black uppercase tracking-[0.4em] opacity-40">Directivas_Especiales (Notas)</label>
+                  <label className="text-[8px] font-mono font-black uppercase tracking-[0.4em] opacity-40">Directivas Especiales (Notas)</label>
                   <textarea 
                     rows={3}
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    placeholder="NOTAS_DE_ADQUISICIÓN_OPCIONALES"
+                    placeholder="NOTAS DE ADQUISICIÓN OPCIONALES"
                     className="w-full bg-on-surface/[0.03] border-2 border-on-surface/10 focus:border-on-surface outline-none px-4 py-3 text-xs font-mono normal-case tracking-wider placeholder:opacity-20 transition-all resize-none h-28"
                   />
                 </div>
@@ -190,7 +190,7 @@ export default function ValidationPage() {
                   type="submit"
                   className="w-full sm:w-auto bg-on-surface text-surface border-2 border-on-surface px-10 py-4 font-black uppercase text-[10px] tracking-[0.4em] transition-all brutal-shadow hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:scale-95"
                 >
-                  Continuar_Al_Pago
+                  Continuar Al Pago
                 </button>
               </div>
             </form>
