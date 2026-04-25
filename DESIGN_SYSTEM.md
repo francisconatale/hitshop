@@ -1,4 +1,4 @@
-# HitShop Design System: Silicon Brutalism (V1.2)
+# HitShop Design System: Silicon Brutalism (V1.3)
 
 This document is the aesthetic law of HitShop. The agent MUST consult this file before performing any UI modification.
 
@@ -7,7 +7,8 @@ This document is the aesthetic law of HitShop. The agent MUST consult this file 
 - **Philosophy**: The product is the hero. The interface is the framework (visible technical infrastructure).
 - **Global Texture**: Always apply the noise overlay (`.bg-noise`) to eliminate the "digital plastic" feel.
 
-## 2. Layout Constraints
+## 2. Layout Constraints & Patterns
+
 | Element | Rule | Token / Tailwind Class |
 | :--- | :--- | :--- |
 | **Borders** | Strictly straight (Zero radius) | `rounded-none` (Forced via global CSS) |
@@ -16,24 +17,41 @@ This document is the aesthetic law of HitShop. The agent MUST consult this file 
 | **Grid** | Shared borders effect | `border-r border-b border-on-surface/10` |
 | **Container** | Maximum working width | `max-w-[1440px]` |
 
-## 3. Color Palette (Tokens)
+### 🛠 The "Fixed Viewport" Pattern (CRITICAL)
+Used in Checkout and Success flows to ensure a controlled, high-density experience without global page scroll.
+- **Root Container**: `max-h-[calc(100vh-200px)]` (approx) to fit the screen.
+- **Structure**: Grid layout (usually `lg:grid-cols-12`).
+  - **Main Info (8 cols)**: `overflow-y-auto` with `custom-scrollbar`.
+  - **Actions/Sidebar (4 cols)**: Fixed position within the grid, no internal scroll.
+- **Mobile Behavior**: Collapse to single column, but maintain high density.
+
+## 3. Print Protocol
+The system prints technical data, not interface chrome.
+- **Hidden Elements**: `Header` and `Footer` MUST use `print:hidden`.
+- **Layout Reset**: Remove external margins and shadows (`print:p-0`, `print:border-0`, `print:shadow-none`).
+
+## 4. Admin & Data Management
+- **Identity**: Technical IDs and UIDs MUST use `font-mono`, `text-[9px]`, all-caps, `opacity-40`.
+- **Critical Actions**: 
+  - Delete buttons use `text-error`.
+  - Labels: `CRITICAL_ACTION: PERMANENTLY_DELETE_TRANSACTION_LOG?`.
+- **Loading State**: Mandatory Shimmer Skeletons via `loading.tsx`. No empty white screens.
+
+## 5. Color Palette (Tokens)
 - **Primary (Silicon Lime)**: `#a3fe00` (`--primary-fixed`) -> Critical actions and energy accents.
 - **Surface (Industrial Cream)**: `#f8f7ee` (`--surface`) -> Main system background.
 - **On-Surface (Deep Olive)**: `#1B2601` (`--on-surface`) -> Main text, borders, and solid shadows.
 - **On-Surface Variant**: `#3D4530` -> Secondary text and disabled states.
-- **Status Badges**:
-  - `OUT_OF_STOCK`: 40% opacity, extreme tracking.
-  - `POPULAR`: `on-surface` background, `surface` text.
+- **Error**: State defined in Tailwind for critical/destructive actions.
 
-## 4. Typography & Micro-Metadata
+## 6. Typography & Micro-Metadata
 - **Headings**: `Space Grotesk`, Black (900), Uppercase. Tight tracking.
 - **Huge Text**: `.text-huge` (Responsive, line-height 0.85).
 - **Body**: `Inter` or `Geist`, Medium (500).
 - **Metadata (Technical)**: `Monospace` (`Geist`), Bold, All-caps.
   - **Small Data**: `text-[7px]` or `text-[9px]`, `tracking-[0.2em]`, `opacity-20` to `opacity-40`.
-- **Gradients**: `.text-gradient` (from `on-surface` to `on-surface-variant`).
 
-## 5. Component Recipes
+## 7. Component Recipes
 
 ### Industrial Button
 ```tsx
@@ -49,11 +67,6 @@ This document is the aesthetic law of HitShop. The agent MUST consult this file 
 </div>
 ```
 
-### Motion & Feedback
-- **Marquee**: Use the `<Marquee />` component for news or stock status.
-- **Scramble**: Use `<ScrambleText />` for industrial text entries.
-- **Hover Transitions**: `duration-300` to `duration-700` to soften the visual rawness.
-
-## 6. Image Treatment
+## 8. Image Treatment
 - **Blending**: Product images on cream backgrounds MUST use `mix-blend-multiply` to integrate with the paper/noise texture.
 - **Padding**: Generous internal spacing in image containers to prevent the product from touching industrial borders.

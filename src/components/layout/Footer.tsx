@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer 
       suppressHydrationWarning 
-      className={`${isHome ? 'mt-16 md:mt-24' : 'mt-8 md:mt-12'} bg-on-surface text-surface py-12 md:py-20 px-0 overflow-hidden`}
+      className={`${isHome ? 'mt-16 md:mt-24' : 'mt-8 md:mt-12'} bg-on-surface text-surface py-12 md:py-20 px-0 overflow-hidden print:hidden`}
     >
       <ClientOnly>
         {isHome && (

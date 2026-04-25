@@ -2,11 +2,21 @@
 
 import React from 'react';
 import { useCart } from '@/context/CartContext';
+import { useSystemUI } from '@/context/SystemUIContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export function CartDrawer() {
-  const { items, isOpen, toggleCart, removeFromCart, clearCart, total } = useCart();
+  const { items, isOpen, toggleCart, removeFromCart, total } = useCart();
+  const { showNotification } = useSystemUI();
+  const router = useRouter();
+
+  const handleCheckout = () => {
+    showNotification("REDIRECCIONANDO A TERMINAL DE PAGO", 'system');
+    toggleCart();
+    router.push('/checkout/selection');
+  };
 
   return (
     <AnimatePresence>
@@ -18,7 +28,7 @@ export function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={toggleCart}
-            className="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-[99998]"
+            className="fixed inset-0 bg-on-surface/60 z-[99998]"
           />
 
           {/* Drawer */}
@@ -50,7 +60,7 @@ export function CartDrawer() {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-transparent relative z-10">
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-transparent relative z-10">
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
                   <span className="material-symbols-outlined text-6xl">inventory_2</span>
@@ -66,7 +76,8 @@ export function CartDrawer() {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <section className="space-y-4">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 border-b border-on-surface/10 pb-2">Selected_Assets</h3>
                   {items.map((item) => (
                     <div key={item.id} className="group relative">
                       <Link 
@@ -110,7 +121,7 @@ export function CartDrawer() {
                       </button>
                     </div>
                   ))}
-                </div>
+                </section>
               )}
             </div>
 
@@ -124,21 +135,17 @@ export function CartDrawer() {
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-3">
-                  <button 
-                    onClick={clearCart}
-                    className="w-full bg-surface text-on-surface border border-on-surface px-3 py-3 font-black uppercase text-[10px] tracking-widest transition-all hover:bg-on-surface hover:text-surface active:scale-95"
-                  >
-                    Clear_Mem
-                  </button>
-                  <button className="w-full bg-primary-fixed text-on-surface border-2 border-on-surface px-3 py-3 font-black uppercase text-[10px] tracking-widest transition-all brutal-shadow-primary hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:scale-[0.98]">
-                    Execute_Node
-                  </button>
-                </div>
+                <button 
+                  onClick={handleCheckout}
+                  className="w-full bg-primary-fixed text-on-surface border-2 border-on-surface px-3 py-4 font-black uppercase text-xs tracking-[0.2em] transition-all brutal-shadow-primary hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none active:scale-[0.98] flex items-center justify-center gap-4"
+                >
+                  <span className="material-symbols-outlined text-xl">terminal</span>
+                  Execute_Final_Node
+                </button>
                 
-                <div className="pt-2 border-t border-on-surface/10 flex justify-center">
+                <div className="pt-2 flex justify-center">
                   <p className="text-[7px] font-mono opacity-40 uppercase tracking-[0.3em]">
-                    End-to-end encrypted transaction
+                    System status: operational // awaiting execution
                   </p>
                 </div>
               </div>

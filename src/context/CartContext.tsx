@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { PublicProduct } from '@/types/product';
+import { useSystemUI } from './SystemUIContext';
 
 interface CartContextType {
   items: PublicProduct[];
@@ -22,52 +23,50 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<PublicProduct[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const { showNotification } = useSystemUI();
 
-  // Inicializar desde sessionStorage (solo en cliente)
+  // Inicialización
   useEffect(() => {
     const saved = sessionStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        setItems(JSON.parse(saved));
-      } catch (e) {
-        console.error("Error parsing cart from sessionStorage", e);
-      }
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setItems(parsed);
+      } catch (e) {}
     }
     setIsHydrated(true);
   }, []);
 
-  // Persistir cambios en sessionStorage
+  // Persistencia
   useEffect(() => {
     if (isHydrated) {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     }
   }, [items, isHydrated]);
 
-  const addToCart = (product: PublicProduct) => {
+  const addToCart = useCallback((product: PublicProduct) => {
     setItems((prev) => {
-      // Evitar duplicados ya que la cantidad siempre es 1
       if (prev.find(item => item.id === product.id)) return prev;
       return [...prev, product];
     });
-    setIsOpen(true); // Abrir el carrito al agregar algo
-  };
+    showNotification("PRODUCTO AGREGADO CON ÉXITO", 'add');
+  }, [showNotification]);
 
-  const removeFromCart = (productId: string) => {
+  const removeFromCart = useCallback((productId: string) => {
     setItems((prev) => prev.filter(item => item.id !== productId));
-  };
+    showNotification("PRODUCTO QUITADO CON ÉXITO", 'remove');
+  }, [showNotification]);
 
-  const clearCart = () => {
+  const clearCart = useCallback((silent = false) => {
     setItems([]);
-  };
+    if (!silent) {
+      showNotification("CARRITO VACIADO COMPLETAMENTE", 'remove');
+    }
+  }, [showNotification]);
 
-  const toggleCart = () => {
-    setIsOpen(prev => !prev);
-  };
-
-  const total = useMemo(() => {
-    return items.reduce((acc, item) => acc + item.price, 0);
-  }, [items]);
-
+  const toggleCart = useCallback(() => setIsOpen(prev => !prev), []);
+  
+  const total = useMemo(() => items.reduce((acc, item) => acc + item.price, 0), [items]);
   const itemCount = items.length;
 
   return (
@@ -88,8 +87,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 export function useCart() {
   const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
+  if (!context) throw new Error('useCart must be used within a CartProvider');
   return context;
 }

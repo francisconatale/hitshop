@@ -8,7 +8,8 @@ import { Star, Flame, Trophy } from '@phosphor-icons/react';
 import { useCart } from '@/context/CartContext';
 
 export default function ProductCard({ product }: { product: Product | PublicProduct }) {
-  const { addToCart } = useCart();
+  const { addToCart, items, removeFromCart } = useCart();
+  const isInCart = items.some(item => item.id === product.id);
   const suffix = product.id.toString().slice(-3).toUpperCase().padStart(3, "0");
   const systemId = `IDX.${product.name.substring(0, 3).toUpperCase()}.${suffix}`;
 
@@ -26,13 +27,13 @@ export default function ProductCard({ product }: { product: Product | PublicProd
           {!product.selled && <span className="text-success flex items-center gap-1">AVAILABLE</span>}
         </div>
 
-        <div className="aspect-square relative overflow-hidden transition-all duration-700 p-4">
+        <div className="aspect-square relative overflow-hidden transition-all duration-700 p-4 bg-on-surface/[0.02] dark:bg-on-surface/[0.05] group-hover:bg-on-surface/[0.05] dark:group-hover:bg-on-surface/10">
           <Image
             alt={product.name}
             src={product.image[0]}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain mix-blend-multiply scale-100 group-hover:scale-105 transition-transform duration-700 p-4"
+            className="object-contain mix-blend-multiply scale-100 group-hover:scale-105 transition-all duration-700 p-4"
           />
 
           {/* Subtle Badges */}
@@ -54,7 +55,7 @@ export default function ProductCard({ product }: { product: Product | PublicProd
           )}
 
           {product.selled && (
-            <div className="absolute inset-0 bg-surface/80 backdrop-blur-[2px] flex items-center justify-center z-40 pointer-events-none">
+            <div className="absolute inset-0 bg-surface/90 flex items-center justify-center z-40 pointer-events-none">
               <span className="text-[10px] font-black uppercase tracking-[0.4em] border-y border-on-surface/20 py-1 px-4 opacity-40">
                 OUT_OF_STOCK
               </span>
@@ -64,7 +65,7 @@ export default function ProductCard({ product }: { product: Product | PublicProd
 
         <div className="p-4 flex flex-col flex-grow border-t border-on-surface/5">
           <div className="flex justify-between items-start mb-1">
-            <h3 className="text-lg font-black uppercase tracking-tighter leading-tight text-on-surface/80 group-hover:text-on-surface transition-colors">
+            <h3 className="text-lg font-black font-heading uppercase tracking-tighter leading-tight text-on-surface/80 group-hover:text-on-surface transition-colors">
               {product.name}
             </h3>
           </div>
@@ -84,17 +85,17 @@ export default function ProductCard({ product }: { product: Product | PublicProd
         <div className="flex flex-col">
           <span className="text-[7px] font-mono opacity-20 uppercase tracking-widest">Valuation</span>
           <div className="flex items-baseline gap-2">
-            <span className="text-xl font-black tabular-nums tracking-tighter text-on-surface">${product.price}</span>
+            <span className="text-xl font-black font-heading tabular-nums tracking-tighter text-on-surface">${product.price}</span>
             <span className="text-[10px] font-mono opacity-10 line-through tracking-tighter">${originalPrice}</span>
           </div>
         </div>
 
         {!product.selled && (
           <button 
-            onClick={() => addToCart(product as PublicProduct)}
+            onClick={() => isInCart ? removeFromCart(product.id) : addToCart(product as PublicProduct)}
             className="bg-surface text-on-surface border border-on-surface/20 px-3 py-1 font-black uppercase text-[9px] tracking-widest transition-all hover:bg-on-surface hover:text-surface active:scale-95"
           >
-            <Text path="productTexts.addButton" />
+            {isInCart ? "Remove" : <Text path="productTexts.addButton" />}
           </button>
         )}
       </div>

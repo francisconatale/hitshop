@@ -11,6 +11,7 @@ interface AuthContextType {
   userData: UserData | null;
   loading: boolean;
   logout: () => Promise<void>;
+  updateUserData: (data: Partial<UserData>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = authService.onAuthStateChange(async (currentUser) => {
       setUser(currentUser);
-      
+
       if (currentUser) {
         try {
           const data = await collectionService.getUser(currentUser.uid);
@@ -34,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUserData(null);
       }
-      
+
       setLoading(false);
     });
 
@@ -46,13 +47,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUserData(null);
   };
 
+  const updateUserData = async (data: Partial<UserData>) => {
+    if (!user) return;
+    try {
+      await collectionService.updateUser(user.uid, data);
+      setUserData(prev => prev ? { ...prev, ...data } : null);
+    } catch (error) {
+      console.error("AuthContext: Error updating user data:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, userData, loading, logout }}>
+    <AuthContext.Provider value={{ user, userData, loading, logout, updateUserData }}>
       {children}
     </AuthContext.Provider>
   );
 }
-
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");

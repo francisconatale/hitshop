@@ -11,7 +11,7 @@ export default function Header() {
   const { categories } = useSystem();
 
   return (
-    <header className="sticky top-0 w-full bg-surface/95 backdrop-blur-md z-50 transition-all duration-300 shadow-[0_10px_40px_rgba(27,38,1,0.06)] border-b border-on-surface/[0.08]">
+    <header className="sticky top-0 w-full bg-surface/98 z-50 transition-all duration-300 shadow-[0_10px_40px_rgba(27,38,1,0.06)] border-b border-on-surface/[0.08] print:hidden">
       <div className="max-w-[1440px] mx-auto flex justify-between items-center px-4 md:px-8 py-3 md:py-4">
         <div className="flex items-center gap-8 md:gap-12">
           <Link href="/">

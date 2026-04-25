@@ -110,6 +110,11 @@ Aplicar siempre en la fase de diseño/análisis, **filtrados por las restriccion
 - Sin valores hardcodeados: usar solo variables semánticas (`--color-primary`, etc.).
 - Estructura atómica: ¿los componentes son modulares y reutilizables?
 
+### 5. Patrones Estructurales Específicos
+- **Fixed Viewport**: Obligatorio en flujos transaccionales (Checkout/Success). Prohibido el scroll global de página. Usar rejilla con scroll interno en la columna de datos densos y barra lateral de acciones fija.
+- **Admin Protocol**: Representación de IDs en `font-mono text-[9px] opacity-40`. Acciones críticas siempre con confirmación técnica y colores de error.
+- **Print Safety**: Ocultar navegación global y eliminar decoraciones de sombra/borde externo en modo impresión.
+
 ---
 
 ## Reporte de Cumplimiento (formato estándar)

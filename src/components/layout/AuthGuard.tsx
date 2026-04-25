@@ -3,6 +3,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, ReactNode } from "react";
+import { AdminSkeleton } from "../ui/AdminSkeleton";
+import PageLayout from "./PageLayout";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -26,14 +28,13 @@ export default function AuthGuard({ children, requireAdmin = false, inverse = fa
     }
   }, [user, userData, loading, router, requireAdmin, inverse]);
 
-  // Si está cargando, o las condiciones no se cumplen, suspendemos visualmente
-  // (El loading.tsx de Next.js se encargará de mostrar el spinner si envolvemos la página)
-  if (loading) return null;
+  // Mientras carga la sesión, mostramos el skeleton para no ver blanco
+  if (loading) return <PageLayout><AdminSkeleton /></PageLayout>;
 
   // Verificaciones de seguridad antes de renderizar el contenido
-  if (inverse && user) return null;
-  if (!inverse && !user) return null;
-  if (requireAdmin && userData?.role !== 'admin') return null;
+  if (inverse && user) return <PageLayout><AdminSkeleton /></PageLayout>;
+  if (!inverse && !user) return <PageLayout><AdminSkeleton /></PageLayout>;
+  if (requireAdmin && userData?.role !== 'admin') return <PageLayout><AdminSkeleton /></PageLayout>;
 
   return <>{children}</>;
 }

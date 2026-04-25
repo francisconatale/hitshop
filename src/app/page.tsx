@@ -4,6 +4,10 @@ import { db } from "@/lib/firebase";
 
 export default async function Home() {
   const products = await productsCollection.getProducts(db, false);
-  
-  return <ProductGrid initialProducts={products} />;
+
+  return (
+    <div className="relative">
+      <ProductGrid initialProducts={products} />
+    </div>
+  );
 }

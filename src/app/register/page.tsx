@@ -43,33 +43,33 @@ export default function RegisterPage() {
           )}
 
           <div>
-            <label className="block text-on-surface font-black uppercase tracking-widest text-[10px] mb-2 opacity-50">Identity_Email</label>
+            <label className="block text-on-surface font-black uppercase tracking-widest text-[10px] mb-2 opacity-50">Email_Identidad</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-surface-container border-4 border-on-surface p-4 font-black uppercase text-lg focus:outline-none focus:border-primary-container transition-all placeholder:opacity-20"
-              placeholder="USER@SYSTEM.COM"
+              placeholder="USUARIO@SISTEMA.COM"
               required
               disabled={isSubmitting}
             />
           </div>
 
           <div>
-            <label className="block text-on-surface font-black uppercase tracking-widest text-[10px] mb-2 opacity-50">Identity_Name</label>
+            <label className="block text-on-surface font-black uppercase tracking-widest text-[10px] mb-2 opacity-50">Nombre_Identidad</label>
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               className="w-full bg-surface-container border-4 border-on-surface p-4 font-black uppercase text-lg focus:outline-none focus:border-primary-container transition-all placeholder:opacity-20"
-              placeholder="USER_NAME"
+              placeholder="NOMBRE_USUARIO"
               required
               disabled={isSubmitting}
             />
           </div>
 
           <div>
-            <label className="block text-on-surface font-black uppercase tracking-widest text-[10px] mb-2 opacity-50">Access_Key</label>
+            <label className="block text-on-surface font-black uppercase tracking-widest text-[10px] mb-2 opacity-50">Clave_De_Acceso</label>
             <input
               type="password"
               value={password}
@@ -93,9 +93,9 @@ export default function RegisterPage() {
             {isSubmitting ? (
               <>
                 <span className="w-5 h-5 border-4 border-on-surface border-t-transparent animate-spin rounded-full" />
-                Initializing...
+                Inicializando...
               </>
-            ) : 'Execute_Injection'}
+            ) : 'Ejecutar_Inyección'}
           </button>
         </form>
 
@@ -105,7 +105,7 @@ export default function RegisterPage() {
               <div className="w-full border-t-4 border-on-surface/20"></div>
             </div>
             <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
-              <span className="bg-surface px-4 text-on-surface/40">Alternative_Auth</span>
+              <span className="bg-surface px-4 text-on-surface/40">Autenticación_Alternativa</span>
             </div>
           </div>
 
@@ -130,9 +130,9 @@ export default function RegisterPage() {
 
         <div className="mt-8 pt-6 border-t-2 border-on-surface/10 text-center">
           <p className="font-black uppercase text-[10px] tracking-widest opacity-50">
-            Active node?{' '}
+            ¿Nodo activo?{' '}
             <Link href="/login" className="text-on-surface hover:text-primary-container transition-colors underline underline-offset-4 decoration-4">
-              Access_System
+              Acceder_Al_Sistema
             </Link>
           </p>
         </div>

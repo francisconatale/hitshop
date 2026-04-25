@@ -2,55 +2,59 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Función helper: verifica si el usuario autenticado es admin
-    // leyendo su documento en la colección "users"
-    function isAdmin() {
-      return request.auth != null
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
-    }
-
+    // Helper: Verifica si el usuario está logueado
     function isAuthenticated() {
       return request.auth != null;
     }
 
+    // Helper: Verifica si el usuario es Admin
+    // Usamos get() para leer el rol del documento del usuario
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
     // ───────────────────────────────────────────────
-    // PRODUCTOS PÚBLICOS
-    // Lectura: cualquiera (incluso sin cuenta)
-    // Escritura: solo admins
+    // USUARIOS (NODE_REGISTRY)
+    // ───────────────────────────────────────────────
+    match /users/{userId} {
+      // Un usuario lee lo suyo, un Admin lee TODO
+      allow read: if (isAuthenticated() && request.auth.uid == userId) || isAdmin();
+      
+      // Permitir explícitamente listar la colección completa para el panel Admin
+      allow list: if isAdmin();
+      
+      // Creación: Solo auto-registro como 'user'
+      allow create: if isAuthenticated() 
+                    && request.auth.uid == userId 
+                    && request.resource.data.role == "user";
+      
+      // Update: Dueño (sin cambiar rol) o Admin (control total)
+      allow update: if (isAuthenticated() && request.auth.uid == userId && request.resource.data.role == resource.data.role)
+                    || isAdmin();
+      
+      // Delete: Solo Admin puede purgar nodos
+      allow delete: if isAdmin();
+    }
+
+    // ───────────────────────────────────────────────
+    // ÓRDENES (ORDER_REGISTRY)
+    // ───────────────────────────────────────────────
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ───────────────────────────────────────────────
+    // PRODUCTOS Y CONFIGURACIONES
     // ───────────────────────────────────────────────
     match /products/{id} {
       allow read: if true;
-      allow create, update, delete: if isAdmin();
+      allow write: if isAdmin();
     }
 
-    // ───────────────────────────────────────────────
-    // PRODUCTOS PRIVADOS (margen, costo, descripción)
-    // Solo admins pueden leer y escribir
-    // ───────────────────────────────────────────────
-    match /privateProducts/{id} {
-      allow read, write: if isAdmin();
-    }
-
-    // ───────────────────────────────────────────────
-    // USUARIOS
-    // Lectura: solo el propio usuario
-    // Creación: solo si el rol es "user" (nadie se auto-asigna admin)
-    // Update: bloqueado (nadie cambia roles)
-    // ───────────────────────────────────────────────
-    match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null
-                    && request.auth.uid == userId
-                    && request.resource.data.role == "user";
-      allow update: if false;
-    }
-
-    // ───────────────────────────────────────────────
-    // CONFIGURACIONES GLOBALES (Ej: Textos / Locales)
-    // Lectura: cualquiera (necesario para ver la web)
-    // Escritura: solo admins
-    // ───────────────────────────────────────────────
     match /settings/{document=**} {
       allow read: if true;
       allow write: if isAdmin();
