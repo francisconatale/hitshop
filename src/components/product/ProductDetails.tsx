@@ -2,9 +2,7 @@
 
 import { Product, PublicProduct } from "@/types/product";
 import { Text } from "@/components/ui/Text";
-import { Star, ShieldCheck, Storefront, HandCoins, Info, ArrowRight } from "@phosphor-icons/react";
-import { useState, useEffect, useMemo } from "react";
-import { useCart } from "@/context/CartContext";
+import { ShieldCheck, Storefront, HandCoins, Info } from "@phosphor-icons/react";
 import {
   Carousel,
   CarouselContent,
@@ -13,6 +11,9 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { useState, useEffect, useMemo } from "react";
+import { useCart } from "@/context/CartContext";
+import { RatingStars } from "@/components/ui/RatingStars";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +34,7 @@ export default function ProductDetails({ product }: { product: Product | PublicP
 
   useEffect(() => {
     if (!api) return;
-    
+
     const onSelect = () => {
       setCurrent(api.selectedScrollSnap());
     };
@@ -51,8 +52,8 @@ export default function ProductDetails({ product }: { product: Product | PublicP
 
   // Simulated marketing data
   const originalPrice = Math.round(product.price * 1.25);
-  const rating = 4.9;
-  
+  const rating = product.rating || 0;
+
   const description = product.description || "High-performance silicon unit optimized for extreme throughput and thermal efficiency.";
   const truncatedDesc = description.length > 200 ? description.slice(0, 200) + "..." : description;
 
@@ -80,7 +81,7 @@ export default function ProductDetails({ product }: { product: Product | PublicP
                 </CarouselItem>
               ))}
             </CarouselContent>
-            
+
             {images.length > 1 && (
               <>
                 <CarouselPrevious className="left-0 h-10 w-10 border-on-surface/20 bg-surface text-on-surface hover:bg-on-surface hover:text-surface transition-all active:scale-90 z-1 rounded-none" />
@@ -88,7 +89,7 @@ export default function ProductDetails({ product }: { product: Product | PublicP
               </>
             )}
           </Carousel>
-          
+
           {isSelled && (
             <div className="absolute top-12 -right-20 w-80 rotate-45 bg-error/40 text-on-error border-y-2 border-on-surface/20 font-black uppercase text-[10px] py-3 text-center tracking-[0.8em] z-20 pointer-events-none backdrop-blur-sm">
               <span>UNAVAILABLE</span>
@@ -123,13 +124,9 @@ export default function ProductDetails({ product }: { product: Product | PublicP
 
           {/* 2. Rating Block */}
           <div className="flex items-center gap-3 mb-8">
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={12} weight={i < 4 ? "fill" : "regular"} className="text-on-surface" />
-              ))}
-            </div>
+            <RatingStars rating={rating} />
             <span className="text-[9px] font-mono font-bold opacity-40">
-              {rating} // VERIFIED_ASSET
+              {rating.toFixed(1)} // VERIFIED_ASSET
             </span>
           </div>
 

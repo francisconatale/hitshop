@@ -4,7 +4,8 @@ import { Text } from '@/components/ui/Text';
 import { Product, PublicProduct } from '@/types/product';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Flame, Trophy } from '@phosphor-icons/react';
+import { Flame, Trophy } from '@phosphor-icons/react';
+import { RatingStars } from '@/components/ui/RatingStars';
 import { useCart } from '@/context/CartContext';
 
 export default function ProductCard({ product }: { product: Product | PublicProduct }) {
@@ -15,7 +16,7 @@ export default function ProductCard({ product }: { product: Product | PublicProd
 
   // Simulated marketing data
   const originalPrice = Math.round(product.price * 1.25);
-  const rating = 4.5;
+  const rating = product.rating || 0;
   const isPopular = Number(product.id) % 3 === 0;
   const isLowStock = Number(product.id) % 4 === 0 && !product.selled;
 
@@ -71,12 +72,8 @@ export default function ProductCard({ product }: { product: Product | PublicProd
           </div>
 
           <div className="flex items-center gap-1 opacity-20 group-hover:opacity-40 transition-opacity">
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={8} weight={i < 4 ? "fill" : "regular"} />
-              ))}
-            </div>
-            <span className="text-[7px] font-mono tracking-tighter">REF_{rating}</span>
+            <RatingStars rating={rating} size={8} />
+            <span className="text-[7px] font-mono tracking-tighter">REF_{rating.toFixed(1)}</span>
           </div>
         </div>
       </Link>

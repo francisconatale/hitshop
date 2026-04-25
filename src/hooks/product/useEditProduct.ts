@@ -17,6 +17,7 @@ export function useEditProduct(initialProduct: Product) {
     image: initialProduct.image || [],
     category: initialProduct.category,
     selled: initialProduct.selled || false,
+    rating: initialProduct.rating || 0,
   });
   const [imageInput, setImageInput] = useState("");
   const [errors, setErrors] = useState<ProductValidationErrors>({});

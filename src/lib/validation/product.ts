@@ -8,6 +8,7 @@ export interface ProductValidationErrors {
     margin?: string;
     image?: string;
     category?: string;
+    rating?: string;
 }
 
 /**
@@ -41,6 +42,11 @@ export const validateProduct = (data: ProductAdminRequest): ProductValidationErr
     // Validación de Categoría
     if (!data.category || data.category.trim() === "") {
         errors.category = "la categoría es obligatoria";
+    }
+
+    // Validación de Rating
+    if (data.rating !== undefined && (data.rating < 0 || data.rating > 5)) {
+        errors.rating = "el rating debe estar entre 0 y 5";
     }
 
     return errors;

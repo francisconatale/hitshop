@@ -3,7 +3,6 @@
 import { useEditProduct } from "@/hooks/product/useEditProduct";
 import { Product } from "@/types/product";
 import Rating from '@mui/material/Rating';
-import Stack from '@mui/material/Stack';
 
 const inputClass =
   "w-full bg-surface border border-on-surface/20 focus:border-primary-fixed outline-none px-3 py-2 text-sm font-mono uppercase tracking-widest placeholder:opacity-30 placeholder:normal-case placeholder:tracking-normal transition-colors";
@@ -144,21 +143,20 @@ export function EditProductForm({ product, onSuccess, onCancel }: EditProductFor
           {errors.description && <p className={errorClass}>{errors.description}</p>}
         </div>
 
-        {/* Rating (Mocked) */}
+        {/* Rating */}
         <div className="md:col-span-2">
-          <label className={labelClass}>Valoración (Mocked)</label>
+          <label className={labelClass}>Valoración</label>
           <div className="bg-on-surface/5 p-4 border border-on-surface/10">
-            <Stack spacing={1}>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono opacity-50">Editor_Mode:</span>
-                <Rating name="half-rating" defaultValue={2.5} precision={0.5} />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono opacity-50">Preview_Mode:</span>
-                <Rating name="half-rating-read" defaultValue={2.5} precision={0.5} readOnly />
-              </div>
-            </Stack>
+            <Rating
+              name="rating"
+              value={form.rating || 0}
+              precision={0.5}
+              onChange={(event, newValue) => {
+                setField("rating", newValue);
+              }}
+            />
           </div>
+          {errors.rating && <p className={errorClass}>{errors.rating}</p>}
         </div>
 
         {/* Images */}

@@ -47,10 +47,12 @@ export default function ProductItemsGrid({ products, layout = "grid" }: ProductI
             ))}
           </CarouselContent>
           
-          <div className="absolute -top-12 right-12 flex gap-2">
-            <CarouselPrevious className="static translate-y-0 h-10 w-10 border-on-surface" />
-            <CarouselNext className="static translate-y-0 h-10 w-10 border-on-surface" />
-          </div>
+          {products.length > 4 && (
+            <div className="absolute -top-12 right-12 flex gap-2">
+              <CarouselPrevious className="static translate-y-0 h-10 w-10 border-on-surface" />
+              <CarouselNext className="static translate-y-0 h-10 w-10 border-on-surface" />
+            </div>
+          )}
         </Carousel>
       </div>
     );

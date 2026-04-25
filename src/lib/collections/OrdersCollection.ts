@@ -10,7 +10,8 @@ import {
   where, 
   orderBy, 
   Firestore,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from "firebase/firestore";
 
 export interface OrderItem {
@@ -44,11 +45,22 @@ export class OrdersCollection {
   private collectionName = "orders";
 
   async createOrder(db: Firestore, orderData: Omit<Order, 'createdAt'>) {
+    const batch = writeBatch(db);
+
+    // Referencia de la orden
     const orderRef = doc(db, this.collectionName, orderData.id);
-    await setDoc(orderRef, {
+    batch.set(orderRef, {
       ...orderData,
       createdAt: serverTimestamp()
     });
+
+    // Marcar cada producto como vendido
+    orderData.items.forEach(item => {
+      const productRef = doc(db, "products", item.id);
+      batch.update(productRef, { selled: true });
+    });
+
+    await batch.commit();
     return orderData.id;
   }
 
@@ -78,8 +90,25 @@ export class OrdersCollection {
   }
 
   async updateOrderStatus(db: Firestore, orderId: string, status: Order['status']) {
+    const batch = writeBatch(db);
     const orderRef = doc(db, this.collectionName, orderId);
-    await updateDoc(orderRef, { status });
+    
+    // Actualizamos el estado de la orden
+    batch.update(orderRef, { status });
+
+    // Si el estado es 'completed', marcamos los productos como vendidos
+    if (status === 'completed') {
+      const snapshot = await getDoc(orderRef);
+      if (snapshot.exists()) {
+        const orderData = snapshot.data() as Order;
+        orderData.items.forEach(item => {
+          const productRef = doc(db, "products", item.id);
+          batch.update(productRef, { selled: true });
+        });
+      }
+    }
+
+    await batch.commit();
   }
 
   async deleteOrder(db: Firestore, orderId: string) {

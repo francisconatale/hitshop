@@ -9,6 +9,7 @@ export interface PublicProduct {
     image: string[];
     category: string;
     selled: boolean;
+    rating?: number;
 }
 
 /**
@@ -38,6 +39,7 @@ export interface ProductAdminRequest {
     image: string[];
     category: string;
     selled: boolean;
+    rating?: number;
 }
 
 /**

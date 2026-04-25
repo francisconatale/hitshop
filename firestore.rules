@@ -52,7 +52,19 @@ service cloud.firestore {
     // ───────────────────────────────────────────────
     match /products/{id} {
       allow read: if true;
-      allow write: if isAdmin();
+      
+      // Permitir update si es Admin (todo) o si un usuario está marcando como vendido
+      allow update: if isAdmin() || (
+        isAuthenticated() 
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['selled'])
+        && request.resource.data.selled == true
+      );
+      
+      allow create, delete: if isAdmin();
+    }
+
+    match /privateProducts/{id} {
+      allow read, write: if isAdmin();
     }
 
     match /settings/{document=**} {

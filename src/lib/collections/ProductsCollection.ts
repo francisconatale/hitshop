@@ -67,6 +67,7 @@ export class ProductsCollection {
             image: request.image,
             category: request.category,
             selled: request.selled,
+            rating: request.rating || 0,
         };
 
         const privateData: PrivateProduct = {
@@ -95,6 +96,7 @@ export class ProductsCollection {
         if (request.image !== undefined) publicUpdates.image = request.image;
         if (request.category !== undefined) publicUpdates.category = request.category;
         if (request.selled !== undefined) publicUpdates.selled = request.selled;
+        if (request.rating !== undefined) publicUpdates.rating = request.rating;
 
         const privateUpdates: any = { updatedAt: new Date() };
         if (request.purchasePrice !== undefined) privateUpdates.purchasePrice = request.purchasePrice;

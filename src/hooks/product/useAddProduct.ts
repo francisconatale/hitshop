@@ -16,6 +16,7 @@ const EMPTY_FORM: Omit<ProductAdminRequest, 'category'> = {
   margin: 0,
   image: [],
   selled: false,
+  rating: 0,
 };
 
 export function useAddProduct() {
