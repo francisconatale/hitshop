@@ -26,6 +26,20 @@ export default function ProductDetails({ product }: { product: Product | PublicP
   const [current, setCurrent] = useState(0);
   const [showFullDesc, setShowFullDesc] = useState(false);
 
+  // Optimistic Greed Counter
+  const [extraGreed, setExtraGreed] = useState(0);
+  const greedLevel = ((product as PublicProduct).greedCounter || 0) + extraGreed;
+
+  useEffect(() => {
+    const handleIncrement = (e: any) => {
+      if (e.detail?.productId === product.id) {
+        setExtraGreed(prev => prev + 1);
+      }
+    };
+    window.addEventListener('product-greed-increment', handleIncrement);
+    return () => window.removeEventListener('product-greed-increment', handleIncrement);
+  }, [product.id]);
+
   const carouselOpts = useMemo(() => ({ 
     loop: true,
     duration: 20,
@@ -50,7 +64,6 @@ export default function ProductDetails({ product }: { product: Product | PublicP
 
   const scrollTo = (index: number) => api?.scrollTo(index, true); 
 
-  // Simulated marketing data
   const originalPrice = Math.round(product.price * 1.25);
   const rating = product.rating || 0;
 
@@ -131,7 +144,17 @@ export default function ProductDetails({ product }: { product: Product | PublicP
           </div>
 
           {/* 3. Transaction Block (Price + Trust) */}
-          <div className="mb-8 p-6 border border-on-surface/10 bg-on-surface/[0.02]">
+          <div className="mb-8 p-6 border border-on-surface/10 bg-on-surface/[0.02] relative overflow-hidden">
+            {/* Contextual Demand Status */}
+            {greedLevel > 0 && !isSelled && (
+              <div className={cn(
+                "absolute top-0 right-0 bg-primary-fixed text-on-surface px-3 py-1 text-[8px] font-black uppercase tracking-widest border-l border-b border-on-surface/10 transition-all duration-500",
+                extraGreed > 0 ? "animate-pulse scale-110" : ""
+              )}>
+                TENDENCIA: {greedLevel} PERSONAS INTERESADAS
+              </div>
+            )}
+
             <div className="flex flex-col mb-6">
               <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest mb-1">Valuation</span>
               <div className="flex items-baseline gap-3">
@@ -188,11 +211,6 @@ export default function ProductDetails({ product }: { product: Product | PublicP
                 SOLD OUT
               </div>
             )}
-            
-            <button className="w-full bg-surface text-on-surface border border-on-surface/20 px-8 py-4 font-black uppercase text-[10px] tracking-widest hover:bg-on-surface/5 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
-              <Info size={16} weight="bold" className="opacity-30" />
-              Consultar Ubicación
-            </button>
           </div>
         </div>
       </div>

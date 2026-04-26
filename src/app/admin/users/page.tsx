@@ -12,6 +12,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingUid, setDeletingUid] = useState<string | null>(null);
+  const [creatingContactUid, setCreatingContactUid] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -25,6 +26,32 @@ export default function AdminUsersPage() {
       console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateContact = async (user: UserData) => {
+    const name = user.name || user.displayName || 'Anónimo';
+    const phone = user.phone || '';
+
+    if (!phone) {
+      alert("ERROR: NODO_SIN_COMMLINK (El usuario no tiene teléfono registrado)");
+      return;
+    }
+
+    setCreatingContactUid(user.uid);
+    try {
+      await collectionService.createContact({
+        name,
+        phone,
+        whatsapp: phone,
+        email: user.email || undefined
+      });
+      alert(`PROTOCOLO_EXITOSO: ${name.toUpperCase()} agregado como contacto logístico.`);
+    } catch (error) {
+      console.error("Error creating contact:", error);
+      alert("ERROR: FALLO_EN_LA_CREACIÓN_DEL_CONTACTO");
+    } finally {
+      setCreatingContactUid(null);
     }
   };
 
@@ -96,6 +123,15 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-4">
+                        <button 
+                          onClick={() => handleCreateContact(user)}
+                          disabled={creatingContactUid === user.uid}
+                          className={`text-primary-fixed hover:bg-primary-fixed hover:text-on-surface p-1 transition-colors ${creatingContactUid === user.uid ? 'animate-pulse' : ''}`}
+                          title="GENERAR_CONTACTO_LOGÍSTICO"
+                        >
+                          <span className="material-symbols-outlined text-lg">person_add</span>
+                        </button>
+
                         <button 
                           onClick={() => handleDeleteUser(user.uid)}
                           disabled={deletingUid === user.uid}

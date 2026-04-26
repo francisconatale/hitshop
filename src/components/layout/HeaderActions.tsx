@@ -11,9 +11,6 @@ export default function HeaderActions() {
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-2">
         <CartIcon />
-        <span className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2">
-          search
-        </span>
         
         {user ? (
           <div className="flex items-center gap-4">

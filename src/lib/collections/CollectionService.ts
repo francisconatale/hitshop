@@ -1,6 +1,11 @@
 import { db } from "../firebase";
 import authCollection, { UserData } from "./AuthCollection";
 import ordersCollection, { Order } from "./OrdersCollection";
+import productsCollection from "./ProductsCollection";
+import sellRequestsCollection from "./SellRequestsCollection";
+import contactsCollection from "./ContactsCollection";
+import { Product, ProductAdminRequest, UpdateProductRequest } from "@/types/product";
+import { ContactRequest, UpdateContactRequest } from "@/types/contact";
 
 export class CollectionService {
   // User Methods
@@ -38,11 +43,62 @@ export class CollectionService {
   }
 
   async updateOrderStatus(orderId: string, status: Order['status']) {
-    await ordersCollection.updateOrderStatus(db, orderId, status);
+    return await ordersCollection.updateOrderStatus(db, orderId, status);
   }
 
   async deleteOrder(orderId: string) {
-    await ordersCollection.deleteOrder(db, orderId);
+    return await ordersCollection.deleteOrder(db, orderId);
+  }
+
+  // Product Methods
+  async getProducts(isAdmin: boolean) {
+    return await productsCollection.getProducts(db, isAdmin);
+  }
+
+  async createProduct(request: ProductAdminRequest) {
+    return await productsCollection.createProduct(db, request);
+  }
+
+  async updateProduct(id: string, request: UpdateProductRequest) {
+    return await productsCollection.updateProduct(db, id, request);
+  }
+
+  async deleteProduct(id: string) {
+    return await productsCollection.deleteProduct(db, id);
+  }
+
+  // Sell Request Methods
+  async getSellRequests() {
+    return await sellRequestsCollection.getSellRequests(db);
+  }
+
+  async createSellRequest(request: any) {
+    return await sellRequestsCollection.createSellRequest(db, request);
+  }
+
+  async deleteSellRequest(id: string) {
+    return await sellRequestsCollection.deleteSellRequest(db, id);
+  }
+
+  // Contact Methods
+  async getContacts() {
+    return await contactsCollection.getContacts(db);
+  }
+
+  async getContactById(id: string) {
+    return await contactsCollection.getContactById(db, id);
+  }
+
+  async createContact(request: ContactRequest) {
+    return await contactsCollection.createContact(db, request);
+  }
+
+  async updateContact(id: string, request: UpdateContactRequest) {
+    return await contactsCollection.updateContact(db, id, request);
+  }
+
+  async deleteContact(id: string) {
+    return await contactsCollection.deleteContact(db, id);
   }
 }
 

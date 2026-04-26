@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { db } from "@/lib/firebase";
-import productsCollection from "@/lib/collections/ProductsCollection";
+import { collectionService } from "@/lib/collections/CollectionService";
+import { ImageService } from "@/lib/ImageService";
 import { ProductAdminRequest } from "@/types/product";
 import { ProductValidationErrors, validateProduct, isProductValid } from "@/lib/validation/product";
 import { useSystem } from "@/context/SystemContext";
@@ -22,14 +22,14 @@ const EMPTY_FORM: Omit<ProductAdminRequest, 'category'> = {
 export function useAddProduct() {
   const pathname = usePathname();
   const category = pathname.split("/").filter(Boolean)[0] ?? "";
-  const { addProductToState } = useSystem();
-
+  
   const [form, setForm] = useState(EMPTY_FORM);
   const [imageInput, setImageInput] = useState("");
   const [errors, setErrors] = useState<ProductValidationErrors>({});
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { addProductToState } = useSystem();
 
   const setField = <K extends keyof typeof EMPTY_FORM>(key: K, value: (typeof EMPTY_FORM)[K]) => {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -46,19 +46,8 @@ export function useAddProduct() {
   const handleFileUpload = async (file: File) => {
     try {
       setUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "");
-
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData }
-      );
-      
-      if (!res.ok) throw new Error("Upload failed");
-      
-      const { secure_url } = await res.json();
-      addImage(secure_url);
+      const url = await ImageService.uploadImage(file);
+      addImage(url);
     } catch (error) {
       console.error("Error uploading to Cloudinary:", error);
       setErrors(prev => ({ ...prev, image: "Error al subir la imagen" }));
@@ -89,8 +78,7 @@ export function useAddProduct() {
 
     try {
       setSaving(true);
-      const id = await productsCollection.createProduct(db, request);
-      // Añadir el nuevo producto al estado local inmediatamente (sin refetch)
+      const id = await collectionService.createProduct(request);
       addProductToState(category, { ...request, id });
       setSuccess(true);
       reset();

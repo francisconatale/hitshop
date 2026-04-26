@@ -1,8 +1,18 @@
-import { doc, setDoc, updateDoc, getDocs, deleteDoc, getDoc, collection, Firestore, query, where } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getDocs, deleteDoc, getDoc, collection, Firestore, query, where, increment } from "firebase/firestore";
 import { Product, PublicProduct, PrivateProduct, ProductAdminRequest, UpdateProductRequest } from "@/types/product";
 import { validateProduct, isProductValid } from "@/lib/validation/product";
 
 export class ProductsCollection {
+
+    /**
+     * Incrementa el contador de "codicia" cuando un producto es reservado/agregado al carrito.
+     */
+    async incrementGreedCounter(db: Firestore, id: string): Promise<void> {
+        const productRef = doc(db, "products", id);
+        await updateDoc(productRef, {
+            greedCounter: increment(1)
+        });
+    }
 
     /**
      * Obtiene los productos por categoría.
@@ -68,6 +78,7 @@ export class ProductsCollection {
             category: request.category,
             selled: request.selled,
             rating: request.rating || 0,
+            greedCounter: request.greedCounter || 0,
         };
 
         const privateData: PrivateProduct = {
@@ -97,6 +108,7 @@ export class ProductsCollection {
         if (request.category !== undefined) publicUpdates.category = request.category;
         if (request.selled !== undefined) publicUpdates.selled = request.selled;
         if (request.rating !== undefined) publicUpdates.rating = request.rating;
+        if (request.greedCounter !== undefined) publicUpdates.greedCounter = request.greedCounter;
 
         const privateUpdates: any = { updatedAt: new Date() };
         if (request.purchasePrice !== undefined) privateUpdates.purchasePrice = request.purchasePrice;

@@ -14,7 +14,7 @@ export default function DevConsole() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === "d" && e.ctrlKey) {
+      if (e.key?.toLowerCase() === "d" && e.ctrlKey) {
         e.preventDefault();
         setIsOpen(!isOpen);
       }

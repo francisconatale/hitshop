@@ -19,7 +19,7 @@ export default function Header() {
               <span className="text-primary-fixed">HIT</span><span className="opacity-70">SHOP</span>
             </h1>
           </Link>
-          <nav className="hidden lg:flex gap-10">
+          <nav className="hidden lg:flex gap-10 items-center">
             {categories.map((cat) => {
               const isActive = pathname === `/${cat}` || pathname.includes(`/${cat}/`) || (cat === 'products' && pathname.includes('/products/'));
               return (
@@ -37,6 +37,17 @@ export default function Header() {
                 </Link>
               );
             })}
+            {/* Trade-In Link */}
+            <Link
+              href="/vender/hardware"
+              className={`font-black uppercase text-xs tracking-widest transition-all relative px-3 py-1.5 border-2 ${
+                pathname.includes('/vender')
+                  ? "border-primary-fixed bg-primary-fixed/10 text-primary-fixed" 
+                  : "border-on-surface/20 text-on-surface hover:border-primary-fixed hover:text-primary-fixed hover:bg-primary-fixed/5"
+              }`}
+            >
+              VENDENOS TU GPU
+            </Link>
           </nav>
         </div>
         <ClientOnly>

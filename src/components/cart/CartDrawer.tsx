@@ -15,7 +15,7 @@ export function CartDrawer() {
   const handleCheckout = () => {
     showNotification("REDIRECCIONANDO A TERMINAL DE PAGO", 'system');
     toggleCart();
-    router.push('/checkout/selection');
+    router.push('/checkout/validation');
   };
 
   return (

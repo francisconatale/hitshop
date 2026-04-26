@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { db } from "@/lib/firebase";
-import productsCollection from "@/lib/collections/ProductsCollection";
+import { collectionService } from "@/lib/collections/CollectionService";
+import { ImageService } from "@/lib/ImageService";
 import { Product, UpdateProductRequest } from "@/types/product";
 import { ProductValidationErrors, validateProduct, isProductValid } from "@/lib/validation/product";
 
@@ -40,19 +40,8 @@ export function useEditProduct(initialProduct: Product) {
   const handleFileUpload = async (file: File) => {
     try {
       setUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "");
-
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData }
-      );
-      
-      if (!res.ok) throw new Error("Upload failed");
-      
-      const { secure_url } = await res.json();
-      addImage(secure_url);
+      const url = await ImageService.uploadImage(file);
+      addImage(url);
     } catch (error) {
       console.error("Error uploading to Cloudinary:", error);
       setErrors(prev => ({ ...prev, image: "Error al subir la imagen" }));
@@ -75,7 +64,7 @@ export function useEditProduct(initialProduct: Product) {
 
     try {
       setSaving(true);
-      await productsCollection.updateProduct(db, form.id, form);
+      await collectionService.updateProduct(form.id, form);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
       return true;

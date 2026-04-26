@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { PublicProduct } from '@/types/product';
 import { useSystemUI } from './SystemUIContext';
+import { db } from '@/lib/firebase';
+import ProductsCollection from '@/lib/collections/ProductsCollection';
 
 interface CartContextType {
   items: PublicProduct[];
@@ -18,6 +20,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'hitshop_cart_session';
+const GREED_HISTORY_KEY = 'hitshop_greed_history';
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<PublicProduct[]>([]);
@@ -45,12 +48,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, isHydrated]);
 
   const addToCart = useCallback((product: PublicProduct) => {
-    setItems((prev) => {
-      if (prev.find(item => item.id === product.id)) return prev;
-      return [...prev, product];
-    });
-    showNotification("PRODUCTO AGREGADO CON ÉXITO", 'add');
-  }, [showNotification]);
+    const alreadyInCart = items.some(item => item.id === product.id);
+    
+    if (!alreadyInCart) {
+      setItems((prev) => [...prev, product]);
+      
+      // Control de duplicados en el contador (Cache Local)
+      const greedHistory = JSON.parse(localStorage.getItem(GREED_HISTORY_KEY) || '[]');
+      const hasIncrementedBefore = greedHistory.includes(product.id);
+
+      if (!hasIncrementedBefore) {
+        // Incrementamos el contador de codicia en Firestore
+        ProductsCollection.incrementGreedCounter(db, product.id).catch(console.error);
+        
+        // Guardamos en el historial local para no repetir
+        const newHistory = [...greedHistory, product.id];
+        localStorage.setItem(GREED_HISTORY_KEY, JSON.stringify(newHistory));
+
+        // Despachamos un evento para actualización optimista en la UI (diferido)
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('product-greed-increment', { 
+            detail: { productId: product.id } 
+          }));
+        }, 0);
+      }
+      
+      showNotification("PRODUCTO AGREGADO CON ÉXITO", 'add');
+    }
+  }, [items, showNotification]);
 
   const removeFromCart = useCallback((productId: string) => {
     setItems((prev) => prev.filter(item => item.id !== productId));
@@ -63,6 +88,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       showNotification("CARRITO VACIADO COMPLETAMENTE", 'remove');
     }
   }, [showNotification]);
+
+  // Listener para cerrar sesión
+  useEffect(() => {
+    const handleLogout = () => clearCart(true);
+    window.addEventListener('user-logout', handleLogout);
+    return () => window.removeEventListener('user-logout', handleLogout);
+  }, [clearCart]);
 
   const toggleCart = useCallback(() => setIsOpen(prev => !prev), []);
   

@@ -37,6 +37,11 @@ export interface Order {
     address: string | null;
     pickup: boolean;
   };
+  assignedContact?: {
+    id: string;
+    name: string;
+    whatsapp: string;
+  };
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   createdAt: any;
 }
@@ -52,12 +57,6 @@ export class OrdersCollection {
     batch.set(orderRef, {
       ...orderData,
       createdAt: serverTimestamp()
-    });
-
-    // Marcar cada producto como vendido
-    orderData.items.forEach(item => {
-      const productRef = doc(db, "products", item.id);
-      batch.update(productRef, { selled: true });
     });
 
     await batch.commit();

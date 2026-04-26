@@ -10,6 +10,7 @@ export interface PublicProduct {
     category: string;
     selled: boolean;
     rating?: number;
+    greedCounter: number;
 }
 
 /**
@@ -40,6 +41,7 @@ export interface ProductAdminRequest {
     category: string;
     selled: boolean;
     rating?: number;
+    greedCounter?: number;
 }
 
 /**

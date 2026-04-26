@@ -171,7 +171,7 @@ export default function ProductGrid({ category, initialProducts = [], children }
                   <h2 className="text-4xl sm:text-6xl font-black font-heading uppercase tracking-tighter">Últimos Ingresos</h2>
                 </div>
               </div>
-              <ProductItemsGrid products={initialProducts} layout="carousel" />
+              <ProductItemsGrid products={initialProducts} layout="carousel" isLatest={true} />
             </div>
           )}
         </div>

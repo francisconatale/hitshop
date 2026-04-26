@@ -48,16 +48,33 @@ service cloud.firestore {
     }
 
     // ───────────────────────────────────────────────
+    // CONTACTOS (LOGISTIC_CONTACTS)
+    // ───────────────────────────────────────────────
+    match /contacts/{contactId} {
+      allow read: if true; // Usuarios pueden verlos para elegir el destinatario de WhatsApp
+      allow write: if isAdmin(); // Solo admins gestionan la red de contactos
+    }
+
+    // ───────────────────────────────────────────────
+    // VENTA DE HARDWARE (SELL_REQUESTS)
+    // ───────────────────────────────────────────────
+    match /sell_requests/{requestId} {
+      allow create: if true; // Cualquier persona puede enviar una solicitud de venta
+      allow read, update, delete: if isAdmin(); // Solo el admin puede ver y gestionar
+    }
+
+    // ───────────────────────────────────────────────
     // PRODUCTOS Y CONFIGURACIONES
     // ───────────────────────────────────────────────
     match /products/{id} {
       allow read: if true;
       
-      // Permitir update si es Admin (todo) o si un usuario está marcando como vendido
+      // Permitir update si es Admin (todo), o si alguien está marcando como vendido, o si alguien incrementa el greedCounter
       allow update: if isAdmin() || (
-        isAuthenticated() 
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['selled'])
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['selled'])
         && request.resource.data.selled == true
+      ) || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['greedCounter'])
       );
       
       allow create, delete: if isAdmin();

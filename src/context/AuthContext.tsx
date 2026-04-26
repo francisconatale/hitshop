@@ -45,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     await authService.logout();
     setUserData(null);
+    window.dispatchEvent(new Event('user-logout'));
   };
 
   const updateUserData = async (data: Partial<UserData>) => {

@@ -10,14 +10,7 @@ export default function AdminPage() {
 
   const adminModules = [
     {
-      title: "Gestión_De_Productos",
-      description: "Carga de inventario, modificación y sincronización de catálogo.",
-      icon: "inventory_2",
-      link: "/admin/products",
-      status: "Operativo"
-    },
-    {
-      title: "Logística_De_Pedidos",
+      title: "Registro_De_Pedidos",
       description: "Monitoreo de transacciones y procesamiento de entregas.",
       icon: "local_shipping",
       link: "/admin/orders",
@@ -31,11 +24,11 @@ export default function AdminPage() {
       status: "Asegurado"
     },
     {
-      title: "Analíticas_Del_Sistema",
-      description: "Métricas de rendimiento y visualización de datos.",
-      icon: "analytics",
-      link: "/admin/analytics",
-      status: "Procesando"
+      title: "Solicitudes_De_Hardware",
+      description: "Evaluación de GPUs y expedientes de Trade-In.",
+      icon: "memory",
+      link: "/admin/solicitudes",
+      status: "Operativo"
     }
   ];
 
@@ -61,7 +54,7 @@ export default function AdminPage() {
             </div>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {adminModules.map((module) => (
               <Link 
                 key={module.title}
@@ -97,20 +90,6 @@ export default function AdminPage() {
               </Link>
             ))}
           </div>
-
-          <section className="mt-12 bg-surface-variant border border-outline-variant p-8">
-             <div className="flex items-center justify-between mb-8 border-b border-outline-variant pb-4">
-               <h2 className="text-2xl font-black uppercase tracking-tighter italic">Logs_Recientes_Del_Sistema</h2>
-               <button className="text-[10px] font-black uppercase tracking-widest border border-outline-variant px-4 py-2 hover:bg-primary hover:text-on-primary transition-colors">
-                 Ver_Todos_Los_Logs
-               </button>
-             </div>
-             <div className="space-y-4 font-mono text-[11px] opacity-60">
-               <p>[OK] Nodo admin autenticado: {user?.uid.substring(0,8)}... a las {new Date().toLocaleTimeString()}</p>
-               <p>[INFO] Sincronización de catálogo completada. 142 activos en línea.</p>
-               <p>[WARN] Tráfico inusual detectado en /category/tech.</p>
-             </div>
-          </section>
         </div>
       </PageLayout>
     </AuthGuard>

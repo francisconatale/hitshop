@@ -22,14 +22,22 @@ interface OrderSummary {
   total: number;
 }
 
+export interface AssignedContact {
+  id: string;
+  name: string;
+  whatsapp: string;
+}
+
 interface CheckoutContextType {
   identity: Identity;
   payment: Payment;
+  assignedContact: AssignedContact | null;
   orderId: string | null;
   orderSummary: OrderSummary | null;
   isConfirming: boolean;
   setIdentity: (identity: Identity) => void;
   setPayment: (payment: Payment) => void;
+  setAssignedContact: (contact: AssignedContact | null) => void;
   clearCheckout: () => void;
   confirmOrder: (currentPayment?: Payment) => Promise<void>;
 }
@@ -42,6 +50,7 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
   
   const [identity, setIdentity] = useState<Identity>({ name: '', phone: '', notes: '' });
   const [payment, setPayment] = useState<Payment>({ method: 'transfer', address: '', pickup: true });
+  const [assignedContact, setAssignedContact] = useState<AssignedContact | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [orderSummary, setOrderSummary] = useState<OrderSummary | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -54,6 +63,7 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         const parsed = JSON.parse(saved);
         setIdentity(parsed.identity);
         setPayment(parsed.payment);
+        if (parsed.assignedContact) setAssignedContact(parsed.assignedContact);
         if (parsed.orderId) setOrderId(parsed.orderId);
         if (parsed.orderSummary) setOrderSummary(parsed.orderSummary);
       } catch (e) {
@@ -66,19 +76,28 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
     sessionStorage.setItem('hitshop_checkout_state', JSON.stringify({
       identity,
       payment,
+      assignedContact,
       orderId,
       orderSummary
     }));
-  }, [identity, payment, orderId, orderSummary]);
+  }, [identity, payment, assignedContact, orderId, orderSummary]);
 
   const clearCheckout = useCallback(() => {
     setIdentity({ name: '', phone: '', notes: '' });
     setPayment({ method: 'transfer', address: '', pickup: true });
+    setAssignedContact(null);
     setOrderId(null);
     setOrderSummary(null);
     setIsConfirming(false);
     sessionStorage.removeItem('hitshop_checkout_state');
   }, []);
+
+  // Listener para cerrar sesión
+  useEffect(() => {
+    const handleLogout = () => clearCheckout();
+    window.addEventListener('user-logout', handleLogout);
+    return () => window.removeEventListener('user-logout', handleLogout);
+  }, [clearCheckout]);
 
   const confirmOrder = useCallback(async (currentPayment?: Payment) => {
     if (isConfirming) return;
@@ -125,6 +144,7 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         total,
         identity,
         payment: finalPayment,
+        assignedContact: assignedContact || undefined,
         status: 'pending' as const
       };
 
@@ -139,17 +159,19 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
       setIsConfirming(false);
       throw error;
     }
-  }, [clearCart, identity, items, payment, total, updateUserData, user, userData, isConfirming]);
+  }, [clearCart, identity, items, payment, assignedContact, total, updateUserData, user, userData, isConfirming]);
 
   return (
     <CheckoutContext.Provider value={{
       identity,
       payment,
+      assignedContact,
       orderId,
       orderSummary,
       isConfirming,
       setIdentity,
       setPayment,
+      setAssignedContact,
       clearCheckout,
       confirmOrder
     }}>
