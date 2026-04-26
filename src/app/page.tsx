@@ -8,9 +8,9 @@ export default async function Home() {
 
   return (
     <div className="relative">
-      <ProductGrid initialProducts={products} />
+      <ProductGrid initialProducts={products} animated={true} />
 
-      <TradeInPromo />
+      <TradeInPromo animated={true} />
     </div>
   );
 }

@@ -1,8 +1,12 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
 import { WhatsappLogo } from '@phosphor-icons/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const STEPS = [
   {
@@ -27,11 +31,48 @@ const STEPS = [
   }
 ];
 
-export default function HowToBuy() {
+export default function HowToBuy({ animated = false }: { animated?: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stepsRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    if (!animated) return;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top 80%', // Empieza cuando el tope de la sección llega al 80% del viewport
+        toggleActions: 'play none none none'
+      }
+    });
+
+    // Estado inicial forzado para evitar saltos
+    gsap.set([headerRef.current, stepsRef.current?.children || []], { 
+      opacity: 0, 
+      y: 40 
+    });
+
+    tl.to(headerRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power3.out'
+    })
+    .to(stepsRef.current?.children || [], {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: 'power2.out'
+    }, '-=0.4'); // Empieza un poco antes de que termine el header
+
+  }, { scope: containerRef, dependencies: [animated] });
+
   return (
-    <section className="bg-on-surface text-surface border-y-2 border-on-surface overflow-hidden w-full">
+    <section ref={containerRef} className="bg-on-surface text-surface border-y-2 border-on-surface overflow-hidden w-full">
       <div className="w-full">
-        <header className="py-12 md:py-16 px-4 sm:px-10 border-b-2 border-surface/10">
+        <header ref={headerRef} className={`py-12 md:py-16 px-4 sm:px-10 border-b-2 border-surface/10 ${animated ? 'opacity-0 translate-y-10' : ''}`}>
           <div className="max-w-[1440px] mx-auto">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-8 h-1 bg-primary-fixed" />
@@ -45,11 +86,11 @@ export default function HowToBuy() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full">
+        <div ref={stepsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full">
           {STEPS.map((step) => (
-            <div 
-              key={step.id} 
-              className="border-r border-b border-surface/10 p-6 md:p-8 lg:p-10 flex flex-col gap-6 group hover:bg-surface/[0.03] transition-colors"
+            <div
+              key={step.id}
+              className={`border-r border-b border-surface/10 p-6 md:p-8 lg:p-10 flex flex-col gap-6 group hover:bg-surface/[0.03] transition-colors ${animated ? 'opacity-0 translate-y-10' : ''}`}
             >
               <span className="font-mono text-3xl md:text-4xl font-black text-primary-fixed opacity-40 group-hover:opacity-100 transition-opacity">
                 {step.id}
@@ -75,7 +116,7 @@ export default function HowToBuy() {
               </p>
             </div>
           </div>
-          <a 
+          <a
             href="https://api.whatsapp.com/send?text=¡Hola! Me gustaría hacer una consulta o armar un pedido."
             target="_blank"
             rel="noopener noreferrer"

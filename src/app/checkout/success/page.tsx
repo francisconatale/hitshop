@@ -60,13 +60,12 @@ export default function SuccessPage() {
       ? orderSummary.items.map(item => `• ${item.name} ($${item.price.toLocaleString()})`).join('\n')
       : 'Detalles pendientes';
     const totalText = orderSummary ? `$${orderSummary.total.toLocaleString()}` : 'Pendiente';
-    const message = `NUEVO PEDIDO HITSHOP\n\n` +
+    const message = `Hola! Te escribo para coordinar mi pedido.\n\n` +
       `PEDIDO: #${orderId}\n` +
       `NOMBRE: ${identity.name}\n` +
       `PRODUCTOS:\n${itemsText}\n\n` +
       `TOTAL: ${totalText}\n` +
-      `ENTREGA: ${payment.pickup ? 'Retiro en persona' : 'Envío a: ' + (payment.address || 'A coordinar')}\n\n` +
-      `Hola! Te escribo para coordinar mi pedido.`;
+      `ENTREGA: ${payment.pickup ? 'Retiro en persona' : (payment.address || 'A coordinar')}`;
 
     const encodedMessage = encodeURIComponent(message);
     const cleanPhone = assignedContact?.whatsapp.replace(/\D/g, '') || '';
