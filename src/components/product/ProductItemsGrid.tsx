@@ -103,10 +103,10 @@ export default function ProductItemsGrid({
             ))}
           </CarouselContent>
           
-          {products.length > 4 && (
-            <div className="absolute -top-12 right-12 flex gap-2">
-              <CarouselPrevious className="static translate-y-0 h-10 w-10 border-on-surface" />
-              <CarouselNext className="static translate-y-0 h-10 w-10 border-on-surface" />
+          {products.length > 1 && (
+            <div className="absolute -top-10 sm:-top-14 right-0 sm:right-12 flex gap-2">
+              <CarouselPrevious className="static translate-y-0 h-8 w-8 sm:h-10 sm:w-10 border-on-surface" />
+              <CarouselNext className="static translate-y-0 h-8 w-8 sm:h-10 sm:w-10 border-on-surface" />
             </div>
           )}
         </Carousel>

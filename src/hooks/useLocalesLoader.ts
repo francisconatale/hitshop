@@ -3,14 +3,15 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import localesCollection, { AppLocales } from "@/lib/collections/LocalesCollection";
-import { productTexts, navItems, sidebar, ticker } from "@/locales/index";
+import { productTexts, navItems, sidebar, ticker, cartTexts } from "@/locales/index";
 import { getCachedLocales, saveLocalesToCache, mergeLocales } from "@/locales/localesCache";
 
 const INITIAL_LOCALES: AppLocales = {
   productTexts,
   navItems,
   sidebar,
-  ticker
+  ticker,
+  cartTexts
 };
 
 export function useLocalesLoader() {

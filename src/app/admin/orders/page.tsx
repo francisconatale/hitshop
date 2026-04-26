@@ -56,13 +56,6 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const statusColors = {
-    pending: 'bg-primary-fixed text-on-surface',
-    processing: 'bg-tertiary text-on-tertiary',
-    completed: 'bg-success text-on-success',
-    cancelled: 'bg-error text-on-error'
-  };
-
   if (loading) return <PageLayout><AdminSkeleton /></PageLayout>;
 
   return (
@@ -116,9 +109,6 @@ export default function AdminOrdersPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 ${statusColors[order.status]}`}>
-                        {order.status === 'pending' ? 'PENDIENTE' : order.status === 'processing' ? 'PROCESANDO' : order.status === 'completed' ? 'COMPLETADO' : 'CANCELADO'}
-                      </span>
                       <select 
                         value={order.status}
                         onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
@@ -137,8 +127,8 @@ export default function AdminOrdersPage() {
                     <div className="md:col-span-4 p-6 border-b-2 md:border-b-0 md:border-r-2 border-on-surface space-y-4">
                       <div>
                         <label className="text-[8px] font-mono font-black uppercase tracking-widest opacity-40">Nodo_Identidad</label>
-                        <p className="font-black uppercase text-sm">{order.identity.name}</p>
-                        <p className="font-mono text-xs opacity-60">{order.identity.phone}</p>
+                        <p className="font-black uppercase text-sm">{order.identity.name || 'NOMBRE_NO_ASIGNADO'}</p>
+                        <p className="font-mono text-xs opacity-60">{order.identity.phone || 'SIN_TELÉFONO'}</p>
                       </div>
                       <div>
                         <label className="text-[8px] font-mono font-black uppercase tracking-widest opacity-40">Terminal_Logística</label>

@@ -13,6 +13,7 @@ import HowToBuy from '@/components/layout/HowToBuy';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -97,6 +98,7 @@ export default function ProductGrid({
   children,
   animated = false 
 }: ProductGridProps) {
+  const isMobile = useIsMobile();
   const [isHeroComplete, setIsHeroComplete] = useState(false);
   const latestRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);

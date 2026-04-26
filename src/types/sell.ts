@@ -2,8 +2,9 @@ import { PublicProduct } from "@/types/product";
 
 export interface SellRequest {
   id: string;
+  userId?: string;
   createdAt: Date;
-  status: 'pending' | 'reviewing' | 'accepted' | 'rejected';
+  status: 'pending' | 'accepted' | 'completed';
 
   // Hardware Proposal
   marca: string;
@@ -21,4 +22,7 @@ export interface SellRequest {
   // Contact
   sellerName: string;
   sellerContact: string; // WhatsApp o Instagram
+
+  // Admin response
+  quotation?: number | null;
 }

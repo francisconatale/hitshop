@@ -166,7 +166,7 @@ export function AddProductForm({ onSuccess }: AddProductFormProps) {
                 value={form.rating || 0}
                 precision={0.5}
                 onChange={(event, newValue) => {
-                  setField("rating", newValue);
+                  setField("rating", newValue ?? undefined);
                 }}
               />
             </div>

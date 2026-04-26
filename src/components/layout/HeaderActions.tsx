@@ -25,15 +25,6 @@ export default function HeaderActions() {
               </div>
               
               <div className="flex items-center gap-1">
-                {isAdmin && (
-                  <Link 
-                    href="/admin" 
-                    className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2"
-                    title="Admin Panel"
-                  >
-                    admin_panel_settings
-                  </Link>
-                )}
                 <Link 
                   href="/profile" 
                   className="material-symbols-outlined text-3xl cursor-pointer hover:bg-primary-container transition-colors p-2"

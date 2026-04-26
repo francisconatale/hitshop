@@ -8,16 +8,22 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { collectionService } from "@/lib/collections/CollectionService";
 import { Order } from "@/lib/collections/OrdersCollection";
+import { SellRequest } from "@/types/sell";
 import { format } from 'date-fns';
+
+type TabType = 'orders' | 'requests';
 
 export default function ProfilePage() {
   const { user, userData, updateUserData } = useAuth();
   const { showNotification } = useSystemUI();
   
+  const [activeTab, setActiveTab] = useState<TabType>('orders');
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [requests, setRequests] = useState<SellRequest[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  
   const [form, setForm] = useState({
     name: "",
     phone: ""
@@ -34,18 +40,30 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      fetchUserOrders();
+      fetchUserHistory();
     }
   }, [user]);
 
-  const fetchUserOrders = async () => {
+  const fetchUserHistory = async () => {
+    if (!user) {
+      console.log("ProfilePage: No user found, skipping fetch");
+      return;
+    }
+    console.log("ProfilePage: Fetching history for UID:", user.uid);
+    setLoadingHistory(true);
     try {
-      const data = await collectionService.getUserOrders(user!.uid);
-      setOrders(data);
+      const [ordersData, requestsData] = await Promise.all([
+        collectionService.getUserOrders(user.uid),
+        collectionService.getUserSellRequests(user.uid)
+      ]);
+      console.log("ProfilePage: Orders received:", ordersData.length, ordersData);
+      console.log("ProfilePage: Requests received:", requestsData.length, requestsData);
+      setOrders(ordersData);
+      setRequests(requestsData);
     } catch (error) {
-      console.error("Error fetching user orders:", error);
+      console.error("ProfilePage: Error fetching user history:", error);
     } finally {
-      setLoadingOrders(false);
+      setLoadingHistory(false);
     }
   };
 
@@ -62,11 +80,23 @@ export default function ProfilePage() {
     }
   };
 
-  const statusColors = {
+  const orderStatusColors = {
     pending: 'text-primary-fixed',
     processing: 'text-tertiary',
     completed: 'text-success',
     cancelled: 'text-error'
+  };
+
+  const requestStatusColors = {
+    pending: 'text-primary-fixed',
+    accepted: 'text-success',
+    completed: 'text-on-surface'
+  };
+
+  const requestStatusLabels = {
+    pending: 'PENDIENTE',
+    accepted: 'ACEPTADO',
+    completed: 'COMPLETADO'
   };
 
   const inputStyles = "w-full bg-on-surface/[0.05] border-2 border-on-surface/10 focus:border-primary px-4 py-2 text-sm font-mono uppercase tracking-widest outline-none transition-all";
@@ -213,55 +243,144 @@ export default function ProfilePage() {
             </section>
           </div>
 
-          {/* Order History */}
-          <section className="bg-surface border-2 border-on-surface p-8">
-            <h2 className="text-2xl font-black uppercase tracking-tighter italic mb-8 border-b-2 border-on-surface pb-4">
-              Order_History
-            </h2>
+          {/* Transactions History */}
+          <section className="bg-surface border-2 border-on-surface">
+            <div className="flex border-b-2 border-on-surface">
+              <button 
+                onClick={() => setActiveTab('orders')}
+                className={`flex-1 py-6 font-black uppercase text-sm tracking-[0.2em] transition-all ${activeTab === 'orders' ? 'bg-on-surface text-surface' : 'hover:bg-on-surface/5'}`}
+              >
+                My_Orders ({orders.length})
+              </button>
+              <button 
+                onClick={() => setActiveTab('requests')}
+                className={`flex-1 py-6 font-black uppercase text-sm tracking-[0.2em] transition-all ${activeTab === 'requests' ? 'bg-on-surface text-surface' : 'hover:bg-on-surface/5'}`}
+              >
+                My_Requests ({requests.length})
+              </button>
+            </div>
 
-            {loadingOrders ? (
-              <div className="py-12 flex justify-center">
-                <span className="font-mono text-[10px] uppercase tracking-[0.5em] animate-pulse">Syncing_Records...</span>
-              </div>
-            ) : orders.length === 0 ? (
-              <div className="py-12 text-center opacity-30 italic font-mono text-sm uppercase tracking-widest">
-                No_Transactions_Recorded_On_This_Node
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {orders.map((order) => (
-                  <div key={order.id} className="border-2 border-on-surface p-6 flex flex-col md:flex-row justify-between gap-6 hover:bg-on-surface/[0.02] transition-colors">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <span className="font-mono text-xs font-black text-primary-fixed">#{order.id}</span>
-                        <span className="text-[10px] font-mono opacity-40 uppercase tracking-widest">
-                          {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'yyyy.MM.dd') : 'PENDING_TS'}
-                        </span>
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${statusColors[order.status]}`}>
-                          {order.status}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {order.items.slice(0, 3).map((item, i) => (
-                          <div key={i} className="w-10 h-10 border border-on-surface/10 p-1 bg-white">
-                            <img src={item.image} alt={item.name} className="w-full h-full object-contain mix-blend-multiply" />
-                          </div>
-                        ))}
-                        {order.items.length > 3 && (
-                          <div className="w-10 h-10 border border-on-surface/10 flex items-center justify-center font-mono text-[10px] opacity-40">
-                            +{order.items.length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col justify-end items-end gap-2">
-                      <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest">Total_Valuation</span>
-                      <span className="text-2xl font-black tabular-nums tracking-tighter">${order.total.toLocaleString()}</span>
-                    </div>
+            <div className="p-8">
+              {loadingHistory ? (
+                <div className="py-12 flex justify-center">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.5em] animate-pulse">Syncing_Records...</span>
+                </div>
+              ) : activeTab === 'orders' ? (
+                /* Orders List */
+                orders.length === 0 ? (
+                  <div className="py-12 text-center opacity-30 italic font-mono text-sm uppercase tracking-widest">
+                    No_Transactions_Recorded_On_This_Node
                   </div>
-                ))}
-              </div>
-            )}
+                ) : (
+                  <div className="space-y-6">
+                    {orders.map((order) => (
+                      <div key={order.id} className="border-2 border-on-surface p-6 flex flex-col md:flex-row justify-between gap-6 hover:bg-on-surface/[0.02] transition-colors">
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-4">
+                            <span className="font-mono text-xs font-black text-primary-fixed">#{order.id}</span>
+                            <span className="text-[10px] font-mono opacity-40 uppercase tracking-widest">
+                              {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'yyyy.MM.dd') : 'PENDING_TS'}
+                            </span>
+                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${orderStatusColors[order.status]}`}>
+                              {order.status}
+                            </span>
+                          </div>
+                          <div className="space-y-3 mt-4">
+                            {order.items.map((item, i) => (
+                              <div key={i} className="space-y-1">
+                                <h4 className="text-sm font-black uppercase tracking-tight leading-none">{item.name}</h4>
+                                {item.description && (
+                                  <p className="text-[10px] font-mono opacity-50 uppercase tracking-widest line-clamp-2 max-w-md">
+                                    {item.description}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-4">
+                            {order.items.slice(0, 3).map((item, i) => (
+                              <div key={i} className="w-10 h-10 border border-on-surface/10 p-1 bg-white">
+                                <img src={item.image} alt={item.name} className="w-full h-full object-contain mix-blend-multiply opacity-80" />
+                              </div>
+                            ))}
+                            {order.items.length > 3 && (
+                              <div className="w-10 h-10 border border-on-surface/10 flex items-center justify-center font-mono text-[10px] opacity-40">
+                                +{order.items.length - 3}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex flex-col justify-end items-end gap-2">
+                          <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest">Total_Valuation</span>
+                          <span className="text-2xl font-black tabular-nums tracking-tighter">${order.total.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              ) : (
+                /* Requests List */
+                requests.length === 0 ? (
+                  <div className="py-12 text-center opacity-30 italic font-mono text-sm uppercase tracking-widest">
+                    No_Active_Requests_Found
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {requests.map((request) => (
+                      <div key={request.id} className="border-2 border-on-surface p-6 flex flex-col md:flex-row justify-between gap-6 hover:bg-on-surface/[0.02] transition-colors">
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-4">
+                            <span className="font-mono text-[10px] font-black text-tertiary uppercase tracking-widest">{request.categoria}</span>
+                            <span className="text-[10px] font-mono opacity-40 uppercase tracking-widest">
+                              {format(new Date(request.createdAt), 'yyyy.MM.dd')}
+                            </span>
+                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${requestStatusColors[request.status as keyof typeof requestStatusColors]}`}>
+                              {requestStatusLabels[request.status as keyof typeof requestStatusLabels] || request.status}
+                            </span>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-black uppercase tracking-tight leading-none">{request.marca} {request.modelo}</h3>
+                            <p className="text-[10px] font-mono opacity-40 uppercase tracking-widest mt-1">Uso: {request.uso} // Temp: {request.tempCarga}°C</p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {request.images.map((img, i) => (
+                              <div key={i} className="w-10 h-10 border border-on-surface/10 p-1 bg-white">
+                                <img src={img} alt="Evidence" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex flex-col justify-end items-end gap-3">
+                          {request.quotation ? (
+                            <>
+                              <div className="text-right">
+                                <span className="text-[9px] font-mono opacity-40 uppercase tracking-widest block">Admin_Offer</span>
+                                <span className="text-2xl font-black tabular-nums tracking-tighter text-primary-fixed">${request.quotation.toLocaleString()}</span>
+                              </div>
+                              {request.status === 'accepted' && (
+                                <a 
+                                  href={`https://wa.me/5491123456789?text=${encodeURIComponent(`Hola! Recibí la cotización por mi ${request.marca} ${request.modelo} (#ID: ${request.id.slice(0,8)}) de $${request.quotation.toLocaleString()}. Me gustaría coordinar para concretar la venta.`)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="bg-on-surface text-surface px-4 py-2 font-black uppercase text-[10px] tracking-widest hover:bg-primary-fixed hover:text-on-surface transition-all brutal-shadow-sm flex items-center gap-2"
+                                >
+                                  <span className="material-symbols-outlined text-sm">send</span>
+                                  COORD_SALE
+                                </a>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-[10px] font-black uppercase tracking-widest bg-on-surface text-surface px-4 py-2 brutal-shadow-sm opacity-50">
+                              Pending_Valuation
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              )}
+            </div>
           </section>
         </div>
       </PageLayout>

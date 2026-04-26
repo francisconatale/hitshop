@@ -5,6 +5,7 @@ import { WhatsappLogo } from '@phosphor-icons/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -32,6 +33,7 @@ const STEPS = [
 ];
 
 export default function HowToBuy({ animated = false }: { animated?: boolean }) {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
@@ -42,7 +44,7 @@ export default function HowToBuy({ animated = false }: { animated?: boolean }) {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: 'top 80%', // Empieza cuando el tope de la sección llega al 80% del viewport
+        start: isMobile ? 'top 90%' : 'top 80%',
         toggleActions: 'play none none none'
       }
     });
@@ -67,7 +69,7 @@ export default function HowToBuy({ animated = false }: { animated?: boolean }) {
       ease: 'power2.out'
     }, '-=0.4'); // Empieza un poco antes de que termine el header
 
-  }, { scope: containerRef, dependencies: [animated] });
+  }, { scope: containerRef, dependencies: [animated, isMobile] });
 
   return (
     <section ref={containerRef} className="bg-on-surface text-surface border-y-2 border-on-surface overflow-hidden w-full">

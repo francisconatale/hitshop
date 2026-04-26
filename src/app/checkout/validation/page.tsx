@@ -125,7 +125,7 @@ export default function ValidationPage() {
       setAssignedContact(contactData);
 
       isNavigatingToSuccess.current = true;
-      await confirmOrder(paymentForm);
+      await confirmOrder(paymentForm, identityForm, contactData);
       router.push('/checkout/success');
     } catch (error) {
       isNavigatingToSuccess.current = false;

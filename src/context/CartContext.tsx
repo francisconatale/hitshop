@@ -11,7 +11,7 @@ interface CartContextType {
   isOpen: boolean;
   addToCart: (product: PublicProduct) => void;
   removeFromCart: (productId: string) => void;
-  clearCart: () => void;
+  clearCart: (silent?: boolean) => void;
   toggleCart: () => void;
   total: number;
   itemCount: number;

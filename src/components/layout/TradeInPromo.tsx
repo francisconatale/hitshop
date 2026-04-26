@@ -72,18 +72,18 @@ export default function TradeInPromo({ animated = false }: { animated?: boolean 
     <section ref={containerRef} className="border-t border-on-surface/10 bg-on-surface/[0.02] mt-0 overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-16 md:py-24">
         <div className="max-w-3xl">
-          <div className={`promo-badge inline-block px-3 py-1 bg-primary-fixed text-on-surface text-[10px] font-black uppercase tracking-[0.3em] mb-6 brutal-shadow-sm ${animated ? 'opacity-0' : ''}`}>
+          <div className={`promo-badge inline-block px-3 py-1 bg-primary-fixed text-on-surface text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-4 sm:mb-6 brutal-shadow-sm ${animated ? 'opacity-0' : ''}`}>
             TRADE-IN PROGRAM // STATUS: ACTIVE
           </div>
-          <h2 className={`promo-title text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-6 ${animated ? 'opacity-0' : ''}`}>
+          <h2 className={`promo-title text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.95] sm:leading-[0.9] mb-6 ${animated ? 'opacity-0' : ''}`}>
             Convertí tu hardware usado en <span className="text-primary-fixed">efectivo</span> o crédito.
           </h2>
-          <p className={`promo-text text-on-surface/60 font-mono text-sm md:text-base uppercase tracking-widest leading-relaxed max-w-2xl mb-8 ${animated ? 'opacity-0' : ''}`}>
+          <p className={`promo-text text-on-surface/60 font-mono text-xs sm:text-sm md:text-base uppercase tracking-widest leading-relaxed max-w-2xl mb-8 ${animated ? 'opacity-0' : ''}`}>
             Compramos GPUs, Procesadores y componentes en buen estado. Completá la ficha técnica y recibí una cotización oficial de nuestro equipo en menos de 48 horas.
           </p>
           <Link 
             href="/vender/hardware" 
-            className={`promo-button inline-flex items-center gap-3 px-8 py-4 bg-on-surface text-surface font-black uppercase text-sm tracking-widest hover:bg-primary-fixed hover:text-on-surface brutal-shadow transition-colors ${animated ? 'opacity-0' : ''}`}
+            className={`promo-button w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-on-surface text-surface font-black uppercase text-sm tracking-widest hover:bg-primary-fixed hover:text-on-surface brutal-shadow transition-colors ${animated ? 'opacity-0' : ''}`}
           >
             VENDENOS TU GPU
             <span className="material-symbols-outlined text-base">arrow_forward</span>

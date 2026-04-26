@@ -18,7 +18,7 @@ interface Payment {
 }
 
 interface OrderSummary {
-  items: { name: string; price: number; quantity: number }[];
+  items: { name: string; price: number; quantity: number; image?: string | string[] }[];
   total: number;
 }
 
@@ -39,7 +39,7 @@ interface CheckoutContextType {
   setPayment: (payment: Payment) => void;
   setAssignedContact: (contact: AssignedContact | null) => void;
   clearCheckout: () => void;
-  confirmOrder: (currentPayment?: Payment) => Promise<void>;
+  confirmOrder: (currentPayment?: Payment, currentIdentity?: Identity, currentContact?: AssignedContact) => Promise<void>;
 }
 
 const CheckoutContext = createContext<CheckoutContextType | undefined>(undefined);
@@ -99,18 +99,20 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('user-logout', handleLogout);
   }, [clearCheckout]);
 
-  const confirmOrder = useCallback(async (currentPayment?: Payment) => {
+  const confirmOrder = useCallback(async (currentPayment?: Payment, currentIdentity?: Identity, currentContact?: AssignedContact) => {
     if (isConfirming) return;
     
     setIsConfirming(true);
     const newOrderId = `HS-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     const finalPayment = currentPayment || payment;
+    const finalIdentity = currentIdentity || identity;
+    const finalContact = currentContact || assignedContact;
     
     console.log("Iniciando confirmOrder para:", newOrderId);
 
     // Guardar resumen para el comprobante
-    const summary = {
-      items: items.map(i => ({ name: i.name, price: i.price, quantity: 1 })),
+    const summary: OrderSummary = {
+      items: items.map(i => ({ name: i.name, price: i.price, quantity: 1, image: i.image })),
       total
     };
     setOrderSummary(summary);
@@ -118,8 +120,8 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
     // 1. Guardar datos del usuario SOLO si no los tenía previamente
     try {
       const updates: any = {};
-      if (!userData?.name && identity.name) updates.name = identity.name;
-      if (!userData?.phone && identity.phone) updates.phone = identity.phone;
+      if (!userData?.name && finalIdentity.name) updates.name = finalIdentity.name;
+      if (!userData?.phone && finalIdentity.phone) updates.phone = finalIdentity.phone;
 
       if (Object.keys(updates).length > 0) {
         console.log("Actualizando perfil de usuario:", updates);
@@ -137,14 +139,15 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         items: items.map(item => ({
           id: item.id,
           name: item.name,
+          description: item.description,
           price: item.price,
           image: typeof item.image === 'string' ? item.image : item.image[0],
           category: item.category
         })),
         total,
-        identity,
+        identity: finalIdentity,
         payment: finalPayment,
-        assignedContact: assignedContact || undefined,
+        assignedContact: finalContact,
         status: 'pending' as const
       };
 

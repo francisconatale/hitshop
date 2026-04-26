@@ -7,7 +7,7 @@ export default async function Home() {
   const products = await productsCollection.getProducts(db, false);
 
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden">
       <ProductGrid initialProducts={products} animated={true} />
 
       <TradeInPromo animated={true} />

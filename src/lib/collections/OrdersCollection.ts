@@ -17,6 +17,7 @@ import {
 export interface OrderItem {
   id: string;
   name: string;
+  description?: string;
   price: number;
   image: string;
   category: string;
@@ -41,7 +42,7 @@ export interface Order {
     id: string;
     name: string;
     whatsapp: string;
-  };
+  } | null;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   createdAt: any;
 }
@@ -56,6 +57,7 @@ export class OrdersCollection {
     const orderRef = doc(db, this.collectionName, orderData.id);
     batch.set(orderRef, {
       ...orderData,
+      assignedContact: orderData.assignedContact ?? null,
       createdAt: serverTimestamp()
     });
 
@@ -74,11 +76,17 @@ export class OrdersCollection {
     const ordersRef = collection(db, this.collectionName);
     const q = query(
       ordersRef, 
-      where("userId", "==", userId),
-      orderBy("createdAt", "desc")
+      where("userId", "==", userId)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => doc.data() as Order);
+    const orders = snapshot.docs.map(doc => doc.data() as Order);
+    
+    // Sort in memory to avoid index requirement
+    return orders.sort((a, b) => {
+      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return timeB - timeA;
+    });
   }
 
   async getAllOrders(db: Firestore): Promise<Order[]> {

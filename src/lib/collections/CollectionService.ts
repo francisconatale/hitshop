@@ -6,6 +6,7 @@ import sellRequestsCollection from "./SellRequestsCollection";
 import contactsCollection from "./ContactsCollection";
 import { Product, ProductAdminRequest, UpdateProductRequest } from "@/types/product";
 import { ContactRequest, UpdateContactRequest } from "@/types/contact";
+import { SellRequest } from "@/types/sell";
 
 export class CollectionService {
   // User Methods
@@ -72,8 +73,16 @@ export class CollectionService {
     return await sellRequestsCollection.getSellRequests(db);
   }
 
+  async getUserSellRequests(userId: string) {
+    return await sellRequestsCollection.getUserSellRequests(db, userId);
+  }
+
   async createSellRequest(request: any) {
     return await sellRequestsCollection.createSellRequest(db, request);
+  }
+
+  async updateSellRequest(id: string, data: Partial<SellRequest>) {
+    return await sellRequestsCollection.updateSellRequest(db, id, data);
   }
 
   async deleteSellRequest(id: string) {

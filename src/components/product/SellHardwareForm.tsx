@@ -1,22 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { ImageService } from "@/lib/ImageService";
 import { collectionService } from "@/lib/collections/CollectionService";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const sellSchema = z.object({
   marca: z.string().min(2, "La marca es requerida"),
   modelo: z.string().min(3, "El modelo es requerido"),
-  categoria: z.enum(['gpus', 'cpus', 'motherboards', 'ram', 'storage'], {
-    errorMap: () => ({ message: "Selecciona una categoría válida" }),
-  }),
-  uso: z.enum(['gaming', 'minado', 'oficina', 'otro'], {
-    errorMap: () => ({ message: "Selecciona el uso que tuvo el componente" }),
-  }),
+  categoria: z.string().min(1, "Selecciona una categoría válida"),
+  uso: z.string().min(1, "Selecciona el tipo de uso"),
   tempCarga: z.number().min(20, "Temperatura no válida").max(120, "Temperatura excesiva"),
   tieneCaja: z.boolean(),
   tieneFactura: z.boolean(),
@@ -34,18 +31,29 @@ const errorClass = "text-[9px] font-black uppercase tracking-widest text-error m
 
 export default function SellHardwareForm() {
   const router = useRouter();
+  const { user, userData, updateUserData } = useAuth();
   const [images, setImages] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [imageError, setImageError] = useState("");
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SellFormData>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<SellFormData>({
     resolver: zodResolver(sellSchema),
     defaultValues: {
       tieneCaja: false,
       tieneFactura: false,
+      sellerName: userData?.name || "",
+      sellerContact: userData?.phone || "",
     }
   });
+
+  // Sync with userData when it loads
+  useEffect(() => {
+    if (userData) {
+      if (userData.name) setValue("sellerName", userData.name);
+      if (userData.phone) setValue("sellerContact", userData.phone);
+    }
+  }, [userData, setValue]);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -80,15 +88,31 @@ export default function SellHardwareForm() {
 
       setUploading(false);
 
-      // 2. Crear solicitud
+      // 2. Actualizar perfil si los datos cambiaron
+      const profileUpdates: any = {};
+      if (data.sellerName && data.sellerName !== userData?.name) {
+        profileUpdates.name = data.sellerName;
+      }
+      
+      // Solo actualizamos si parece un teléfono (no un IG) y cambió
+      if (data.sellerContact && data.sellerContact !== userData?.phone && /^\+?[0-9\s-]{7,20}$/.test(data.sellerContact)) {
+        profileUpdates.phone = data.sellerContact;
+      }
+
+      if (Object.keys(profileUpdates).length > 0) {
+        await updateUserData(profileUpdates);
+      }
+
+      // 3. Crear solicitud
       const requestData = {
         ...data,
+        userId: user?.uid,
         images: imageUrls,
       };
 
       await collectionService.createSellRequest(requestData);
 
-      // 3. Redirigir a éxito
+      // 4. Redirigir a éxito
       router.push("/vender/hardware/gracias");
     } catch (error) {
       console.error("Error submitting form:", error);

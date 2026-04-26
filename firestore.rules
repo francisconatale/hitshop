@@ -8,7 +8,6 @@ service cloud.firestore {
     }
 
     // Helper: Verifica si el usuario es Admin
-    // Usamos get() para leer el rol del documento del usuario
     function isAdmin() {
       return isAuthenticated() && 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
@@ -18,22 +17,16 @@ service cloud.firestore {
     // USUARIOS (NODE_REGISTRY)
     // ───────────────────────────────────────────────
     match /users/{userId} {
-      // Un usuario lee lo suyo, un Admin lee TODO
       allow read: if (isAuthenticated() && request.auth.uid == userId) || isAdmin();
-      
-      // Permitir explícitamente listar la colección completa para el panel Admin
       allow list: if isAdmin();
       
-      // Creación: Solo auto-registro como 'user'
       allow create: if isAuthenticated() 
                     && request.auth.uid == userId 
                     && request.resource.data.role == "user";
       
-      // Update: Dueño (sin cambiar rol) o Admin (control total)
       allow update: if (isAuthenticated() && request.auth.uid == userId && request.resource.data.role == resource.data.role)
                     || isAdmin();
       
-      // Delete: Solo Admin puede purgar nodos
       allow delete: if isAdmin();
     }
 
@@ -41,7 +34,9 @@ service cloud.firestore {
     // ÓRDENES (ORDER_REGISTRY)
     // ───────────────────────────────────────────────
     match /orders/{orderId} {
-      allow create: if true;
+      // Cualquier usuario autenticado puede crear una orden
+      allow create: if isAuthenticated();
+      // Solo el dueño o el admin pueden leer
       allow read: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
       allow list: if isAdmin();
       allow update, delete: if isAdmin();
@@ -51,16 +46,19 @@ service cloud.firestore {
     // CONTACTOS (LOGISTIC_CONTACTS)
     // ───────────────────────────────────────────────
     match /contacts/{contactId} {
-      allow read: if true; // Usuarios pueden verlos para elegir el destinatario de WhatsApp
-      allow write: if isAdmin(); // Solo admins gestionan la red de contactos
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // ───────────────────────────────────────────────
     // VENTA DE HARDWARE (SELL_REQUESTS)
     // ───────────────────────────────────────────────
     match /sell_requests/{requestId} {
-      allow create: if true; // Cualquier persona puede enviar una solicitud de venta
-      allow read, update, delete: if isAdmin(); // Solo el admin puede ver y gestionar
+      // El usuario debe estar logueado y el userId debe coincidir con su auth.uid
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Solo el dueño o el admin pueden leer sus solicitudes
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow update, delete: if isAdmin();
     }
 
     // ───────────────────────────────────────────────
@@ -69,7 +67,6 @@ service cloud.firestore {
     match /products/{id} {
       allow read: if true;
       
-      // Permitir update si es Admin (todo), o si alguien está marcando como vendido, o si alguien incrementa el greedCounter
       allow update: if isAdmin() || (
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['selled'])
         && request.resource.data.selled == true
@@ -78,6 +75,11 @@ service cloud.firestore {
       );
       
       allow create, delete: if isAdmin();
+    }
+
+    match /locales/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     match /privateProducts/{id} {

@@ -60,12 +60,17 @@ export default function SuccessPage() {
       ? orderSummary.items.map(item => `• ${item.name} ($${item.price.toLocaleString()})`).join('\n')
       : 'Detalles pendientes';
     const totalText = orderSummary ? `$${orderSummary.total.toLocaleString()}` : 'Pendiente';
+    
+    const deliveryMethod = payment.pickup 
+      ? 'RETIRO EN LOCAL OFICIAL' 
+      : `ENVÍO A DOMICILIO\nDIRECCIÓN: ${payment.address || 'A coordinar'}`;
+
     const message = `Hola! Te escribo para coordinar mi pedido.\n\n` +
       `PEDIDO: #${orderId}\n` +
       `NOMBRE: ${identity.name}\n` +
       `PRODUCTOS:\n${itemsText}\n\n` +
       `TOTAL: ${totalText}\n` +
-      `ENTREGA: ${payment.pickup ? 'Retiro en persona' : (payment.address || 'A coordinar')}`;
+      `ENTREGA: ${deliveryMethod}`;
 
     const encodedMessage = encodeURIComponent(message);
     const cleanPhone = assignedContact?.whatsapp.replace(/\D/g, '') || '';
@@ -108,6 +113,11 @@ export default function SuccessPage() {
                 <p className="text-sm font-black uppercase opacity-70">
                   {payment.pickup ? 'Retiro en Local Oficial' : 'Envío a Domicilio'}
                 </p>
+                {!payment.pickup && payment.address && (
+                  <p className="text-[10px] font-mono opacity-40 uppercase mt-1">
+                    Destino: {payment.address}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <span className="text-[9px] font-black uppercase tracking-widest opacity-30">Te atenderá:</span>
@@ -122,7 +132,13 @@ export default function SuccessPage() {
                 {[
                   { step: '01', title: 'ESCRIBIR', desc: 'Envía los detalles por WhatsApp.' },
                   { step: '02', title: 'CONFIRMAR', desc: 'Aseguramos el stock y el pago.' },
-                  { step: '03', title: 'RECIBIR', desc: 'Coordinamos la entrega final.' }
+                  { 
+                    step: '03', 
+                    title: payment.pickup ? 'RETIRAR' : 'RECIBIR', 
+                    desc: payment.pickup 
+                      ? 'Te avisamos cuando esté listo para retirar.' 
+                      : 'Coordinamos el envío a tu domicilio.' 
+                  }
                 ].map((item) => (
                   <div key={item.step} className="space-y-2">
                     <span className="text-[10px] font-mono font-black text-primary-fixed">{item.step} // {item.title}</span>
