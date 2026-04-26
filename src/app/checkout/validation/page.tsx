@@ -301,8 +301,8 @@ export default function ValidationPage() {
           </div>
 
           {/* Right Column - Sticky Actions */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-8 pl-8 border-l border-on-surface/5 pb-20">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 opacity-40">Tu Carrito</h3>
+          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-8 lg:pl-8 lg:border-l border-on-surface/5 pb-20">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] mb-8 opacity-40">Resumen del Pedido</h3>
             
             <div className="max-h-[30vh] overflow-y-auto pr-4 custom-scrollbar space-y-4">
               {items.map((item) => (

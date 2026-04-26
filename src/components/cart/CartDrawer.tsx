@@ -37,7 +37,7 @@ export function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-surface border-l-2 border-on-surface z-[99999] flex flex-col brutal-shadow"
+            className="fixed right-0 top-0 h-[100dvh] w-full max-w-md bg-surface border-l-2 border-on-surface z-[99999] flex flex-col brutal-shadow"
           >
             {/* Noise Texture */}
             <div className="absolute inset-0 bg-noise opacity-40 pointer-events-none" />
