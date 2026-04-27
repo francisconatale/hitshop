@@ -11,6 +11,7 @@ interface NotificationType {
 interface SystemUIContextType {
   notification: NotificationType | null;
   showNotification: (message: string, type?: NotificationType['type']) => void;
+  hideNotification: () => void;
 }
 
 const SystemUIContext = createContext<SystemUIContextType | undefined>(undefined);
@@ -18,6 +19,13 @@ const SystemUIContext = createContext<SystemUIContextType | undefined>(undefined
 export function SystemUIProvider({ children }: { children: React.ReactNode }) {
   const [notification, setNotification] = useState<NotificationType | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const hideNotification = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    setNotification(null);
+  }, []);
 
   const showNotification = useCallback((message: string, type: NotificationType['type'] = 'system') => {
     // Limpiar cualquier notificación previa inmediatamente
@@ -34,7 +42,7 @@ export function SystemUIProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <SystemUIContext.Provider value={{ notification, showNotification }}>
+    <SystemUIContext.Provider value={{ notification, showNotification, hideNotification }}>
       {children}
     </SystemUIContext.Provider>
   );

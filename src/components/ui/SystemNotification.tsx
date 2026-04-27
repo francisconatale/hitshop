@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { useSystemUI } from '@/context/SystemUIContext';
+import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
-import { ShoppingCart, Trash, WarningCircle, Info } from '@phosphor-icons/react';
+import { ShoppingCart, Trash, WarningCircle, Info, SignOut } from '@phosphor-icons/react';
 
 export function SystemNotification() {
-  const { notification } = useSystemUI();
+  const { notification, hideNotification } = useSystemUI();
+  const { user, logout } = useAuth();
   const [mounted, setMounted] = React.useState(false);
   
   const [activeNotification, setActiveNotification] = React.useState(notification);
@@ -33,6 +35,11 @@ export function SystemNotification() {
     }
   }, [notification]);
 
+  const handleLogout = async () => {
+    hideNotification();
+    await logout();
+  };
+
   if (!mounted) return null;
 
   return (
@@ -41,7 +48,7 @@ export function SystemNotification() {
         <div
           key={activeNotification.id}
           className={cn(
-            "w-auto max-w-[300px] px-4 py-3 border border-on-surface/20 rounded-sm pointer-events-auto flex items-center gap-3 bg-surface shadow-xl",
+            "w-auto max-w-[320px] px-4 py-3 border border-on-surface/20 rounded-sm pointer-events-auto flex items-center gap-3 bg-surface shadow-xl",
             "transition-all duration-300 ease-out",
             isVisible ? "translate-x-0 opacity-100" : "translate-x-[120%] opacity-0",
             activeNotification.type === 'add' ? "bg-surface text-on-surface" : 
@@ -56,10 +63,23 @@ export function SystemNotification() {
           </div>
           
           <div className="flex-grow pr-2">
-            <div className="font-sans text-xs font-bold tracking-tight">
+            <div className="font-sans text-[10px] font-black uppercase tracking-widest opacity-40 mb-0.5">
+              System_Broadcast
+            </div>
+            <div className="font-sans text-xs font-bold tracking-tight uppercase">
               {activeNotification.message}
             </div>
           </div>
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="flex-shrink-0 ml-2 p-1.5 hover:bg-on-surface/10 rounded-full transition-colors group"
+              title="Cerrar Sesión"
+            >
+              <SignOut size={18} weight="bold" className="group-hover:text-error transition-colors" />
+            </button>
+          )}
         </div>
       )}
     </div>
