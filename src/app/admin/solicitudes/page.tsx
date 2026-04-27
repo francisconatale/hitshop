@@ -48,7 +48,7 @@ export default function SolicitudesAdminPage() {
     }
   };
 
-  const openQuotationModal = (id: string, currentQuotation?: number) => {
+  const openQuotationModal = (id: string, currentQuotation?: number | null) => {
     setSelectedRequestId(id);
     setQuotationInput(currentQuotation?.toString() || "");
     setShowModal(true);
