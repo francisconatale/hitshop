@@ -28,7 +28,7 @@ export default function SellHardwarePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
           
           {/* Left Column: Process & Trust (Gestalt: Proximity & Similarity) */}
-          <div className="lg:col-span-4 sticky top-32 space-y-12">
+          <div className="lg:col-span-4 lg:sticky lg:top-32 space-y-12">
             <div>
               <h2 className="text-2xl font-black uppercase tracking-tighter mb-8 border-b border-on-surface/10 pb-4">
                 Cómo funciona
