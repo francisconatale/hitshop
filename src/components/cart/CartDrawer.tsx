@@ -6,17 +6,31 @@ import { useSystemUI } from '@/context/SystemUIContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function CartDrawer() {
   const { items, isOpen, toggleCart, removeFromCart, total } = useCart();
   const { showNotification } = useSystemUI();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   const handleCheckout = () => {
     showNotification("REDIRECCIONANDO A TERMINAL DE PAGO", 'system');
     toggleCart();
     router.push('/checkout/validation');
   };
+
+  const drawerVariants = isMobile 
+    ? {
+        initial: { scale: 0.9, opacity: 0, x: '-50%', y: '-40%' },
+        animate: { scale: 1, opacity: 1, x: '-50%', y: '-50%' },
+        exit: { scale: 0.9, opacity: 0, x: '-50%', y: '-40%' }
+      }
+    : {
+        initial: { x: '100%' },
+        animate: { x: 0 },
+        exit: { x: '100%' }
+      };
 
   return (
     <AnimatePresence>
@@ -28,16 +42,22 @@ export function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={toggleCart}
-            className="fixed inset-0 bg-on-surface/60 z-[99998]"
+            className="fixed inset-0 bg-on-surface/60 z-[99998] backdrop-blur-[2px]"
           />
 
-          {/* Drawer */}
+          {/* Container */}
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-[100dvh] w-full max-w-md bg-surface border-l-2 border-on-surface z-[99999] flex flex-col brutal-shadow"
+            variants={drawerVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={isMobile ? { duration: 0.2, ease: "easeOut" } : { type: 'spring', damping: 25, stiffness: 200 }}
+            className={`
+              fixed z-[99999] flex flex-col bg-surface border-2 border-on-surface brutal-shadow
+              ${isMobile 
+                ? 'left-1/2 top-1/2 w-[90vw] max-h-[80vh] rounded-none' 
+                : 'right-0 top-0 h-[100dvh] w-full max-w-md border-l-2 border-y-0 border-r-0'}
+            `}
           >
             {/* Noise Texture */}
             <div className="absolute inset-0 bg-noise opacity-40 pointer-events-none" />
@@ -95,7 +115,7 @@ export function CartDrawer() {
                         <div className="flex-1 flex flex-col justify-between py-1">
                           <div>
                             <span className="text-[7px] font-mono opacity-40 uppercase tracking-[0.2em] block mb-1">
-                              {item.category} // 0x{item.id.toString().substring(0,4)}
+                              {item.category} {'//'} 0x{item.id.toString().substring(0,4)}
                             </span>
                             <h3 className="font-black text-sm uppercase leading-tight tracking-tighter line-clamp-1">
                               {item.name}

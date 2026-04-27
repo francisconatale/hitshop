@@ -6,6 +6,8 @@ import { useSystemUI } from './SystemUIContext';
 import { db } from '@/lib/firebase';
 import ProductsCollection from '@/lib/collections/ProductsCollection';
 
+import { useIsMobile } from '@/hooks/use-mobile';
+
 interface CartContextType {
   items: PublicProduct[];
   isOpen: boolean;
@@ -27,6 +29,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const { showNotification } = useSystemUI();
+  const isMobile = useIsMobile();
 
   // Inicialización
   useEffect(() => {
@@ -73,21 +76,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }, 0);
       }
       
-      showNotification("PRODUCTO AGREGADO CON ÉXITO", 'add');
+      if (isMobile) {
+        setIsOpen(true);
+      } else {
+        showNotification("PRODUCTO AGREGADO CON ÉXITO", 'add');
+      }
     }
-  }, [items, showNotification]);
+  }, [items, showNotification, isMobile]);
 
   const removeFromCart = useCallback((productId: string) => {
     setItems((prev) => prev.filter(item => item.id !== productId));
-    showNotification("PRODUCTO QUITADO CON ÉXITO", 'remove');
-  }, [showNotification]);
+    if (!isMobile) {
+      showNotification("PRODUCTO QUITADO CON ÉXITO", 'remove');
+    }
+  }, [showNotification, isMobile]);
 
   const clearCart = useCallback((silent = false) => {
     setItems([]);
-    if (!silent) {
+    if (!silent && !isMobile) {
       showNotification("CARRITO VACIADO COMPLETAMENTE", 'remove');
     }
-  }, [showNotification]);
+  }, [isMobile, showNotification]);
 
   // Listener para cerrar sesión
   useEffect(() => {
