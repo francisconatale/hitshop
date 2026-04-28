@@ -108,8 +108,6 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
     const finalIdentity = currentIdentity || identity;
     const finalContact = currentContact || assignedContact;
     
-    console.log("Iniciando confirmOrder para:", newOrderId);
-
     // Guardar resumen para el comprobante
     const summary: OrderSummary = {
       items: items.map(i => ({ name: i.name, price: i.price, quantity: 1, image: i.image })),
@@ -124,7 +122,6 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
       if (!userData?.phone && finalIdentity.phone) updates.phone = finalIdentity.phone;
 
       if (Object.keys(updates).length > 0) {
-        console.log("Actualizando perfil de usuario:", updates);
         await updateUserData(updates);
       }
     } catch (error) {
@@ -150,11 +147,7 @@ export function CheckoutProvider({ children }: { children: React.ReactNode }) {
         assignedContact: finalContact,
         status: 'pending' as const
       };
-
-      console.log("Enviando orden a Firestore:", orderData);
-      await collectionService.createOrder(orderData);
-      console.log("Orden guardada con éxito");
-      
+      await collectionService.createOrder(orderData);      
       setOrderId(newOrderId);
       setIsConfirming(false);
     } catch (error) {
